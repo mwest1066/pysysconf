@@ -5,3 +5,4 @@ test_pysysconf.py
 MANIFEST
 Makefile
 pysysconf.html
+ChangeLog

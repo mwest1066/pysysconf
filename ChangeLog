@@ -1,0 +1,20 @@
+
+0.2.5 2005-03-10
+
+	- Log no action if a check_not_exist already doesn't exist.
+
+	- Split ChangeLog out of README into separate file.
+
+	- Print PysysconfError exception information correctly.
+
+0.2.4 2005-03-09 17:23
+
+	- Remove input_dir variable. Should be set by
+	  user scripts if needed.
+
+	- Fix check_service_status so that needs_restart
+	  and needs_reload are passed to check_service_enabled.
+
+0.2.3 2005-02-16 15:35
+
+	- Add the check_service_status command.
