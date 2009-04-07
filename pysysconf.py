@@ -108,11 +108,25 @@ def acquire_lock(lock_name):
     >>> acquire_lock("/var/lock/pysysconf/copylock")
     """
     try:
-        fd = os.open(lock_name, os.O_CREAT | os.O_EXCL)
-    except EnvironmentError, e:
-        log(LOG_ERROR, "Error: unable to acquire lock "
-            + lock_name + ": " + e.strerror)
-        return False
+        fd = os.open(lock_name, os.O_CREAT | os.O_EXCL | os.O_RDWR, 0644)
+    except:
+        try:
+            fd = open(lock_name)
+            pid = fd.read()
+            fd.close()
+            is_running = False
+            try:
+                if os.system("ps p %d" % int(pid)):
+                    is_running = True
+            except:
+                pass
+            os.unlink(lock_name)
+            fd = os.open(lock_name, os.O_CREAT | os.O_EXCL | os.O_RDWR, 0644)
+        except:
+            log(LOG_ERROR, "Error: unable to acquire lock "
+                + lock_name)
+            return False
+    os.write(fd, str(os.getpid()))
     try:
         os.close(fd)
     except EnvironmentError, e:
@@ -124,7 +138,7 @@ def acquire_lock(lock_name):
     return True
 
 def release_lock(lock_name):
-    """Releases a lock aquired by acquire_lock() by deleting the file
+    """Releases a lock acquired by acquire_lock() by deleting the file
     lock_name. An exception is thrown if the lock was not already acquired.
 
     lock_name : string
