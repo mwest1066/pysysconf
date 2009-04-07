@@ -1,0 +1,414 @@
+
+<!doctype html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module pysysconf</title>
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>pysysconf</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/net/cluster/pysysconf/pysysconf.py">/net/cluster/pysysconf/pysysconf.py</a></font></td></tr></table>
+    <p><tt>Cfengine-style&nbsp;commands&nbsp;for&nbsp;system&nbsp;configuration.<br>
+&nbsp;<br>
+PySysConf&nbsp;provides&nbsp;a&nbsp;number&nbsp;of&nbsp;useful&nbsp;high-level&nbsp;functions&nbsp;for&nbsp;doing<br>
+system&nbsp;configuration.&nbsp;These&nbsp;are&nbsp;modeled&nbsp;on&nbsp;the&nbsp;commands&nbsp;in&nbsp;cfengine.<br>
+&nbsp;<br>
+Logging:<br>
+&nbsp;<br>
+All&nbsp;PySysConf&nbsp;commands&nbsp;will&nbsp;log&nbsp;to&nbsp;stdout&nbsp;and&nbsp;syslog.&nbsp;The&nbsp;verbosity&nbsp;is<br>
+controlled&nbsp;by&nbsp;setting&nbsp;the&nbsp;variables&nbsp;pysysconf.verbosity&nbsp;(for&nbsp;stdout)<br>
+and&nbsp;pysysconf.syslog_verbosity&nbsp;(for&nbsp;syslog).&nbsp;These&nbsp;should&nbsp;be&nbsp;set&nbsp;to<br>
+LOG_NONE,&nbsp;LOG_ERROR,&nbsp;LOG_ACTION,&nbsp;or&nbsp;LOG_NO_ACTION,&nbsp;in&nbsp;increasing&nbsp;order<br>
+of&nbsp;verbosity.<br>
+&nbsp;<br>
+<a href="exceptions.html#Exception">Exception</a>&nbsp;handling:<br>
+&nbsp;<br>
+Internal&nbsp;functions&nbsp;(those&nbsp;starting&nbsp;with&nbsp;an&nbsp;underscore)&nbsp;may&nbsp;raise<br>
+exceptions,&nbsp;including&nbsp;the&nbsp;local&nbsp;class&nbsp;PySysConfError,&nbsp;but&nbsp;they&nbsp;will<br>
+not&nbsp;catch&nbsp;any&nbsp;exceptions&nbsp;caused&nbsp;by&nbsp;unexpected&nbsp;errors.&nbsp;Externally<br>
+visible&nbsp;functions&nbsp;(those&nbsp;without&nbsp;underscores)&nbsp;catch&nbsp;and&nbsp;log<br>
+EnvironmentError&nbsp;and&nbsp;PySysConfError&nbsp;exceptions,&nbsp;and&nbsp;let&nbsp;other<br>
+exceptions&nbsp;fall&nbsp;through.</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#fffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="datetime.html">datetime</a><br>
+<a href="errno.html">errno</a><br>
+<a href="grp.html">grp</a><br>
+</td><td width="25%" valign=top><a href="md5.html">md5</a><br>
+<a href="os.html">os</a><br>
+<a href="pwd.html">pwd</a><br>
+</td><td width="25%" valign=top><a href="socket.html">socket</a><br>
+<a href="stat.html">stat</a><br>
+<a href="sys.html">sys</a><br>
+</td><td width="25%" valign=top><a href="syslog.html">syslog</a><br>
+<a href="types.html">types</a><br>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="exceptions.html#Exception">exceptions.Exception</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="pysysconf.html#PysysconfError">PysysconfError</a>
+</font></dt></dl>
+</dd>
+<dt><font face="helvetica, arial"><a href="pysysconf.html#remove_test">remove_test</a>
+</font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><a href="pysysconf.html#test_age">test_age</a>
+</font></dt><dt><font face="helvetica, arial"><a href="pysysconf.html#test_false">test_false</a>
+</font></dt><dt><font face="helvetica, arial"><a href="pysysconf.html#test_true">test_true</a>
+</font></dt></dl>
+</dd>
+</dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="PysysconfError">class <strong>PysysconfError</strong></a>(<a href="exceptions.html#Exception">exceptions.Exception</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>Class&nbsp;used&nbsp;for&nbsp;all&nbsp;exceptions&nbsp;raised&nbsp;directly&nbsp;by&nbsp;this&nbsp;module.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods inherited from <a href="exceptions.html#Exception">exceptions.Exception</a>:<br>
+<dl><dt><a name="PysysconfError-__getitem__"><strong>__getitem__</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="PysysconfError-__init__"><strong>__init__</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="PysysconfError-__str__"><strong>__str__</strong></a>(...)</dt></dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="remove_test">class <strong>remove_test</strong></a></font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>Class&nbsp;that&nbsp;implements&nbsp;a&nbsp;test&nbsp;for&nbsp;whether&nbsp;a&nbsp;given&nbsp;file&nbsp;or<br>
+directory&nbsp;should&nbsp;be&nbsp;removed.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="remove_test-test"><strong>test</strong></a>(self, file_name, file_stat)</dt></dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="test_age">class <strong>test_age</strong></a>(<a href="pysysconf.html#remove_test">remove_test</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>Tests&nbsp;whether&nbsp;a&nbsp;file&nbsp;is&nbsp;older&nbsp;than&nbsp;a&nbsp;given&nbsp;age.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="test_age-__init__"><strong>__init__</strong></a>(self, age<font color="#909090">=None</font>, age_type<font color="#909090">='mtime'</font>)</dt></dl>
+
+<dl><dt><a name="test_age-test"><strong>test</strong></a>(self, file_name, file_stat)</dt></dl>
+
+<hr>
+Data and other attributes defined here:<br>
+<dl><dt><strong>age</strong> = None</dl>
+
+<dl><dt><strong>age_type</strong> = 'mtime'</dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="test_false">class <strong>test_false</strong></a>(<a href="pysysconf.html#remove_test">remove_test</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>Return&nbsp;False&nbsp;unconditionally.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="test_false-test"><strong>test</strong></a>(self, file_name, file_stat)</dt></dl>
+
+</td></tr></table> <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="test_true">class <strong>test_true</strong></a>(<a href="pysysconf.html#remove_test">remove_test</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>Return&nbsp;True&nbsp;unconditionally.<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="test_true-test"><strong>test</strong></a>(self, file_name, file_stat)</dt></dl>
+
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-acquire_lock"><strong>acquire_lock</strong></a>(lock_name)</dt><dd><tt>Acquires&nbsp;the&nbsp;lock&nbsp;referenced&nbsp;by&nbsp;the&nbsp;given&nbsp;filename&nbsp;by&nbsp;creating&nbsp;the<br>
+file&nbsp;lock_name.&nbsp;The&nbsp;parent&nbsp;directory&nbsp;of&nbsp;lock_name&nbsp;must&nbsp;already&nbsp;exist.<br>
+&nbsp;<br>
+lock_name&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Filename&nbsp;for&nbsp;the&nbsp;lock.<br>
+&nbsp;<br>
+return&nbsp;:&nbsp;boolean<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Returns&nbsp;True&nbsp;if&nbsp;the&nbsp;lock&nbsp;was&nbsp;successfully&nbsp;acquired,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;otherwise&nbsp;False.<br>
+&nbsp;<br>
+e.g.&nbsp;Lock&nbsp;a&nbsp;copy&nbsp;operation:<br>
+&gt;&gt;&gt;&nbsp;<a href="#-acquire_lock">acquire_lock</a>("/var/lock/pysysconf/copylock")</tt></dd></dl>
+ <dl><dt><a name="-check_copy"><strong>check_copy</strong></a>(src, dst, uid<font color="#909090">=None</font>, gid<font color="#909090">=None</font>, perm<font color="#909090">=None</font>, umask<font color="#909090">=None</font>, dmask<font color="#909090">=None</font>, backup<font color="#909090">=True</font>, purge<font color="#909090">=False</font>)</dt><dd><tt>Check&nbsp;the&nbsp;copy&nbsp;of&nbsp;a&nbsp;file,&nbsp;symlink,&nbsp;or&nbsp;directory.<br>
+&nbsp;<br>
+src&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Filename&nbsp;of&nbsp;the&nbsp;source&nbsp;file,&nbsp;symlink,&nbsp;or&nbsp;directory.<br>
+&nbsp;<br>
+dst&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Filename&nbsp;of&nbsp;the&nbsp;destination&nbsp;object.<br>
+&nbsp;<br>
+uid&nbsp;:&nbsp;string,&nbsp;integer,&nbsp;or&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;None)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Username&nbsp;(if&nbsp;a&nbsp;string)&nbsp;or&nbsp;UID&nbsp;(if&nbsp;an&nbsp;int)&nbsp;that&nbsp;should&nbsp;own&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dst&nbsp;object.&nbsp;In&nbsp;the&nbsp;case&nbsp;of&nbsp;a&nbsp;directory&nbsp;copy,&nbsp;uid&nbsp;will&nbsp;be<br>
+&nbsp;&nbsp;&nbsp;&nbsp;applied&nbsp;recursively&nbsp;to&nbsp;all&nbsp;subdirectories&nbsp;and&nbsp;their&nbsp;files.&nbsp;If<br>
+&nbsp;&nbsp;&nbsp;&nbsp;uid&nbsp;is&nbsp;None&nbsp;then&nbsp;the&nbsp;uid&nbsp;of&nbsp;dst&nbsp;is&nbsp;required&nbsp;to&nbsp;be&nbsp;the&nbsp;same&nbsp;as<br>
+&nbsp;&nbsp;&nbsp;&nbsp;that&nbsp;of&nbsp;src.<br>
+&nbsp;<br>
+gid&nbsp;:&nbsp;string,&nbsp;integer,&nbsp;or&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;None)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Groupname&nbsp;or&nbsp;GID,&nbsp;as&nbsp;for&nbsp;uid.<br>
+&nbsp;<br>
+perm&nbsp;:&nbsp;string,&nbsp;integer,&nbsp;or&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;None)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Permissions&nbsp;of&nbsp;dst.&nbsp;Can&nbsp;be&nbsp;a&nbsp;string&nbsp;containing&nbsp;an&nbsp;octal<br>
+&nbsp;&nbsp;&nbsp;&nbsp;number,&nbsp;such&nbsp;as&nbsp;"0644",&nbsp;or&nbsp;an&nbsp;integer&nbsp;containing&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;same&nbsp;value,&nbsp;such&nbsp;as&nbsp;0644.&nbsp;If&nbsp;None,&nbsp;then&nbsp;the&nbsp;permissions<br>
+&nbsp;&nbsp;&nbsp;&nbsp;of&nbsp;dst&nbsp;will&nbsp;be&nbsp;the&nbsp;same&nbsp;as&nbsp;those&nbsp;of&nbsp;src,&nbsp;masked&nbsp;by<br>
+&nbsp;&nbsp;&nbsp;&nbsp;umask&nbsp;(for&nbsp;files)&nbsp;or&nbsp;dmask&nbsp;(for&nbsp;directories).<br>
+&nbsp;<br>
+umask&nbsp;:&nbsp;string,&nbsp;integer,&nbsp;or&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;None)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Mask&nbsp;for&nbsp;permissions&nbsp;of&nbsp;dst&nbsp;for&nbsp;the&nbsp;case&nbsp;that&nbsp;dst&nbsp;is&nbsp;not&nbsp;a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;directory.&nbsp;Will&nbsp;be&nbsp;applied&nbsp;to&nbsp;perm&nbsp;if&nbsp;it&nbsp;is&nbsp;not&nbsp;None,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;otherwise&nbsp;will&nbsp;be&nbsp;applied&nbsp;to&nbsp;the&nbsp;permissions&nbsp;of&nbsp;src.&nbsp;The<br>
+&nbsp;&nbsp;&nbsp;&nbsp;format&nbsp;is&nbsp;the&nbsp;same&nbsp;as&nbsp;that&nbsp;of&nbsp;perm.<br>
+&nbsp;<br>
+dmask&nbsp;:&nbsp;string,&nbsp;integer,&nbsp;or&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;None)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Mask&nbsp;for&nbsp;permissions&nbsp;of&nbsp;dst&nbsp;for&nbsp;the&nbsp;case&nbsp;that&nbsp;dst&nbsp;is&nbsp;a<br>
+&nbsp;&nbsp;&nbsp;&nbsp;directory,&nbsp;as&nbsp;for&nbsp;umask.<br>
+&nbsp;<br>
+backup&nbsp;:&nbsp;boolean<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;True)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;to&nbsp;backup&nbsp;dst&nbsp;if&nbsp;it&nbsp;will&nbsp;be&nbsp;overwritten.<br>
+&nbsp;<br>
+purge&nbsp;:&nbsp;boolean<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;False)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;to&nbsp;delete&nbsp;files&nbsp;in&nbsp;dst&nbsp;(if&nbsp;it&nbsp;is&nbsp;a&nbsp;directory)&nbsp;if<br>
+&nbsp;&nbsp;&nbsp;&nbsp;they&nbsp;are&nbsp;not&nbsp;present&nbsp;in&nbsp;src.<br>
+&nbsp;<br>
+return&nbsp;:&nbsp;boolean<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;any&nbsp;change&nbsp;was&nbsp;made&nbsp;to&nbsp;dst.<br>
+&nbsp;<br>
+e.g.&nbsp;Check&nbsp;that&nbsp;a&nbsp;single&nbsp;file&nbsp;is&nbsp;a&nbsp;copy:<br>
+&gt;&gt;&gt;&nbsp;<a href="#-check_copy">check_copy</a>("main.cf.server",&nbsp;"/etc/sendmail/main.cf")<br>
+&nbsp;<br>
+e.g.&nbsp;Check&nbsp;that&nbsp;a&nbsp;directory&nbsp;is&nbsp;an&nbsp;exact&nbsp;copy,&nbsp;without&nbsp;backup:<br>
+&gt;&gt;&gt;&nbsp;<a href="#-check_copy">check_copy</a>("ppds",&nbsp;"/etc/cups/ppds",&nbsp;purge&nbsp;=&nbsp;True,&nbsp;backup&nbsp;=&nbsp;False)</tt></dd></dl>
+ <dl><dt><a name="-check_dir_exists"><strong>check_dir_exists</strong></a>(dst, uid<font color="#909090">=None</font>, gid<font color="#909090">=None</font>, perm<font color="#909090">=None</font>, backup<font color="#909090">=True</font>)</dt><dd><tt>Check&nbsp;that&nbsp;the&nbsp;directory&nbsp;named&nbsp;dst&nbsp;exists&nbsp;and&nbsp;has&nbsp;the&nbsp;specified<br>
+ownership&nbsp;and&nbsp;permissions.&nbsp;The&nbsp;path&nbsp;to&nbsp;dst&nbsp;must&nbsp;already&nbsp;exist.<br>
+&nbsp;<br>
+dst&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Directory&nbsp;that&nbsp;must&nbsp;exist.<br>
+&nbsp;<br>
+uid&nbsp;:&nbsp;string,&nbsp;integer,&nbsp;or&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;None)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Username&nbsp;(if&nbsp;a&nbsp;string)&nbsp;or&nbsp;UID&nbsp;(if&nbsp;an&nbsp;int)&nbsp;that&nbsp;should&nbsp;own&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dst&nbsp;object.&nbsp;If&nbsp;uid&nbsp;is&nbsp;None&nbsp;then&nbsp;the&nbsp;uid&nbsp;of&nbsp;dst&nbsp;is&nbsp;the&nbsp;default.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+gid&nbsp;:&nbsp;string,&nbsp;integer,&nbsp;or&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;None)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Groupname&nbsp;or&nbsp;GID,&nbsp;as&nbsp;for&nbsp;uid.<br>
+&nbsp;<br>
+perm&nbsp;:&nbsp;string,&nbsp;integer,&nbsp;or&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;None)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Permissions&nbsp;of&nbsp;dst.&nbsp;Can&nbsp;be&nbsp;a&nbsp;string&nbsp;containing&nbsp;an&nbsp;octal<br>
+&nbsp;&nbsp;&nbsp;&nbsp;number,&nbsp;such&nbsp;as&nbsp;"0644",&nbsp;or&nbsp;an&nbsp;integer&nbsp;containing&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;same&nbsp;value,&nbsp;such&nbsp;as&nbsp;0644.&nbsp;If&nbsp;None,&nbsp;then&nbsp;the&nbsp;permissions<br>
+&nbsp;&nbsp;&nbsp;&nbsp;of&nbsp;dst&nbsp;will&nbsp;be&nbsp;the&nbsp;default.<br>
+&nbsp;<br>
+backup&nbsp;:&nbsp;boolean<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;True)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;to&nbsp;backup&nbsp;dst&nbsp;if&nbsp;it&nbsp;will&nbsp;be&nbsp;replaced.<br>
+&nbsp;<br>
+return&nbsp;:&nbsp;boolean<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;any&nbsp;change&nbsp;was&nbsp;made&nbsp;to&nbsp;dst.<br>
+&nbsp;<br>
+e.g.&nbsp;Check&nbsp;that&nbsp;the&nbsp;directory&nbsp;/var/pysysconf&nbsp;exists:<br>
+&gt;&gt;&gt;&nbsp;<a href="#-check_dir_exists">check_dir_exists</a>("/var/pysysconf")</tt></dd></dl>
+ <dl><dt><a name="-check_file_exists"><strong>check_file_exists</strong></a>(dst, uid<font color="#909090">=None</font>, gid<font color="#909090">=None</font>, perm<font color="#909090">=None</font>, backup<font color="#909090">=True</font>)</dt><dd><tt>Check&nbsp;that&nbsp;the&nbsp;file&nbsp;named&nbsp;dst&nbsp;exists&nbsp;and&nbsp;has&nbsp;the&nbsp;specified<br>
+ownership&nbsp;and&nbsp;permissions.&nbsp;The&nbsp;path&nbsp;to&nbsp;dst&nbsp;must&nbsp;already&nbsp;exist.<br>
+&nbsp;<br>
+dst&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Filename&nbsp;that&nbsp;must&nbsp;exist.<br>
+&nbsp;<br>
+uid&nbsp;:&nbsp;string,&nbsp;integer,&nbsp;or&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;None)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Username&nbsp;(if&nbsp;a&nbsp;string)&nbsp;or&nbsp;UID&nbsp;(if&nbsp;an&nbsp;int)&nbsp;that&nbsp;should&nbsp;own&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dst&nbsp;object.&nbsp;If&nbsp;uid&nbsp;is&nbsp;None&nbsp;then&nbsp;the&nbsp;uid&nbsp;of&nbsp;dst&nbsp;is&nbsp;the&nbsp;default.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+gid&nbsp;:&nbsp;string,&nbsp;integer,&nbsp;or&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;None)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Groupname&nbsp;or&nbsp;GID,&nbsp;as&nbsp;for&nbsp;uid.<br>
+&nbsp;<br>
+perm&nbsp;:&nbsp;string,&nbsp;integer,&nbsp;or&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;None)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Permissions&nbsp;of&nbsp;dst.&nbsp;Can&nbsp;be&nbsp;a&nbsp;string&nbsp;containing&nbsp;an&nbsp;octal<br>
+&nbsp;&nbsp;&nbsp;&nbsp;number,&nbsp;such&nbsp;as&nbsp;"0644",&nbsp;or&nbsp;an&nbsp;integer&nbsp;containing&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;same&nbsp;value,&nbsp;such&nbsp;as&nbsp;0644.&nbsp;If&nbsp;None,&nbsp;then&nbsp;the&nbsp;permissions<br>
+&nbsp;&nbsp;&nbsp;&nbsp;of&nbsp;dst&nbsp;will&nbsp;be&nbsp;the&nbsp;default.<br>
+&nbsp;<br>
+backup&nbsp;:&nbsp;boolean<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;True)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;to&nbsp;backup&nbsp;dst&nbsp;if&nbsp;it&nbsp;will&nbsp;be&nbsp;replaced.<br>
+&nbsp;<br>
+return&nbsp;:&nbsp;boolean<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;any&nbsp;change&nbsp;was&nbsp;made&nbsp;to&nbsp;dst.<br>
+&nbsp;<br>
+e.g.&nbsp;Check&nbsp;that&nbsp;/etc/nologin&nbsp;exists&nbsp;and&nbsp;is&nbsp;owned&nbsp;by&nbsp;root:<br>
+&gt;&gt;&gt;&nbsp;<a href="#-check_file_exists">check_file_exists</a>("/etc/nologin",&nbsp;uid&nbsp;=&nbsp;"root")</tt></dd></dl>
+ <dl><dt><a name="-check_link"><strong>check_link</strong></a>(src, dst, uid<font color="#909090">=None</font>, gid<font color="#909090">=None</font>)</dt><dd><tt>Check&nbsp;that&nbsp;dst&nbsp;is&nbsp;a&nbsp;symlink&nbsp;to&nbsp;src.<br>
+&nbsp;<br>
+src&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Filename&nbsp;of&nbsp;the&nbsp;source&nbsp;file,&nbsp;symlink,&nbsp;or&nbsp;directory.<br>
+&nbsp;<br>
+dst&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Filename&nbsp;of&nbsp;the&nbsp;symlink.<br>
+&nbsp;<br>
+uid&nbsp;:&nbsp;string,&nbsp;integer,&nbsp;or&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;None)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Username&nbsp;(if&nbsp;a&nbsp;string)&nbsp;or&nbsp;UID&nbsp;(if&nbsp;an&nbsp;int)&nbsp;that&nbsp;should&nbsp;own&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dst&nbsp;object.&nbsp;If&nbsp;uid&nbsp;is&nbsp;None&nbsp;then&nbsp;the&nbsp;uid&nbsp;of&nbsp;dst&nbsp;is&nbsp;the&nbsp;default.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+gid&nbsp;:&nbsp;string,&nbsp;integer,&nbsp;or&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;None)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Groupname&nbsp;or&nbsp;GID,&nbsp;as&nbsp;for&nbsp;uid.<br>
+&nbsp;<br>
+return&nbsp;:&nbsp;boolean<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;any&nbsp;change&nbsp;was&nbsp;made&nbsp;to&nbsp;dst.<br>
+&nbsp;<br>
+e.g.&nbsp;Check&nbsp;that&nbsp;the&nbsp;link&nbsp;/var/spool/mail&nbsp;points&nbsp;to&nbsp;/net/maildir:<br>
+&gt;&gt;&gt;&nbsp;<a href="#-check_link">check_link</a>("/net/maildir",&nbsp;"/var/spool/mail")</tt></dd></dl>
+ <dl><dt><a name="-check_not_exists"><strong>check_not_exists</strong></a>(dst, test<font color="#909090">=None</font>, follow_links<font color="#909090">=False</font>, backup<font color="#909090">=True</font>)</dt><dd><tt>Delete&nbsp;dst,&nbsp;or&nbsp;files&nbsp;in&nbsp;dst&nbsp;that&nbsp;satisfy&nbsp;test.<br>
+&nbsp;<br>
+dst&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Directory&nbsp;name&nbsp;to&nbsp;remove&nbsp;files&nbsp;in.<br>
+&nbsp;<br>
+test&nbsp;:&nbsp;<a href="#remove_test">remove_test</a>&nbsp;object,&nbsp;or&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;None,&nbsp;remove&nbsp;dst.&nbsp;Otherwise,&nbsp;use&nbsp;this&nbsp;object&nbsp;to&nbsp;test<br>
+&nbsp;&nbsp;&nbsp;&nbsp;whether&nbsp;to&nbsp;remove&nbsp;a&nbsp;given&nbsp;file&nbsp;or&nbsp;directory.<br>
+&nbsp;<br>
+follow_links&nbsp;:&nbsp;boolean<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;False)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;to&nbsp;follow&nbsp;links&nbsp;to&nbsp;files&nbsp;and&nbsp;directories.&nbsp;This&nbsp;can&nbsp;be<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dangerous&nbsp;if&nbsp;a&nbsp;user&nbsp;has&nbsp;write&nbsp;access&nbsp;to&nbsp;any&nbsp;of&nbsp;the&nbsp;directories<br>
+&nbsp;&nbsp;&nbsp;&nbsp;being&nbsp;processed.<br>
+&nbsp;<br>
+backup&nbsp;:&nbsp;boolean<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;True)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;to&nbsp;rename&nbsp;objects&nbsp;to&nbsp;&lt;filename&gt;.&lt;isodate&gt;&nbsp;rather&nbsp;than<br>
+&nbsp;&nbsp;&nbsp;&nbsp;deleting&nbsp;them.<br>
+&nbsp;<br>
+return&nbsp;:&nbsp;boolean<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;any&nbsp;change&nbsp;was&nbsp;made&nbsp;to&nbsp;dst.<br>
+&nbsp;<br>
+e.g.&nbsp;Ensure&nbsp;/etc/nologin&nbsp;does&nbsp;not&nbsp;exist:<br>
+&gt;&gt;&gt;&nbsp;<a href="#-check_not_exists">check_not_exists</a>("/etc/nologin")<br>
+&nbsp;<br>
+e.g.&nbsp;Ensure&nbsp;the&nbsp;entire&nbsp;directory&nbsp;/etc/cups&nbsp;does&nbsp;not&nbsp;exist:<br>
+&gt;&gt;&gt;&nbsp;<a href="#-check_not_exists">check_not_exists</a>("/etc/cups")<br>
+&nbsp;<br>
+e.g.&nbsp;Ensure&nbsp;the&nbsp;contents&nbsp;of&nbsp;/var/mail&nbsp;do&nbsp;not&nbsp;exist,&nbsp;but&nbsp;the&nbsp;/var/mail<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dirctory&nbsp;itself&nbsp;may&nbsp;exist:<br>
+&gt;&gt;&gt;&nbsp;<a href="#-check_not_exists">check_not_exists</a>("/var/mail",&nbsp;test&nbsp;=&nbsp;<a href="#test_true">test_true</a>())<br>
+&nbsp;<br>
+e.g.&nbsp;Ensure&nbsp;all&nbsp;backup&nbsp;files&nbsp;older&nbsp;than&nbsp;one&nbsp;week&nbsp;do&nbsp;not&nbsp;exist:<br>
+&gt;&gt;&gt;&nbsp;test_one_week&nbsp;=&nbsp;<a href="#test_age">test_age</a>(age&nbsp;=&nbsp;datetime.timedelta(days&nbsp;=&nbsp;7))<br>
+&gt;&gt;&gt;&nbsp;<a href="#-check_not_exists">check_not_exists</a>("/backups",&nbsp;test&nbsp;=&nbsp;test_one_week)</tt></dd></dl>
+ <dl><dt><a name="-check_rpm_installed"><strong>check_rpm_installed</strong></a>(rpm_name)</dt><dd><tt>Ensure&nbsp;that&nbsp;the&nbsp;given&nbsp;rpm&nbsp;is&nbsp;installed,&nbsp;using&nbsp;yum&nbsp;for&nbsp;installation.<br>
+&nbsp;<br>
+rpm_name&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Name&nbsp;of&nbsp;rpm&nbsp;to&nbsp;install.<br>
+&nbsp;<br>
+e.g.&nbsp;make&nbsp;sure&nbsp;the&nbsp;latest&nbsp;version&nbsp;of&nbsp;matlab&nbsp;is&nbsp;installed:<br>
+&gt;&gt;&gt;&nbsp;<a href="#-check_rpm_installed">check_rpm_installed</a>("matlab")</tt></dd></dl>
+ <dl><dt><a name="-check_service_disabled"><strong>check_service_disabled</strong></a>(service_name)</dt><dd><tt>Ensure&nbsp;that&nbsp;the&nbsp;given&nbsp;service&nbsp;is&nbsp;currently&nbsp;not&nbsp;running&nbsp;and<br>
+will&nbsp;not&nbsp;start&nbsp;on&nbsp;boot.<br>
+&nbsp;<br>
+service_name&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Name&nbsp;of&nbsp;service&nbsp;to&nbsp;disable.<br>
+&nbsp;<br>
+e.g.&nbsp;Make&nbsp;sure&nbsp;apache&nbsp;is&nbsp;not&nbsp;running:<br>
+&gt;&gt;&gt;&nbsp;<a href="#-check_service_disabled">check_service_disabled</a>("httpd")</tt></dd></dl>
+ <dl><dt><a name="-check_service_enabled"><strong>check_service_enabled</strong></a>(service_name)</dt><dd><tt>Ensure&nbsp;that&nbsp;the&nbsp;given&nbsp;service&nbsp;is&nbsp;currently&nbsp;running&nbsp;and<br>
+will&nbsp;start&nbsp;on&nbsp;boot.<br>
+&nbsp;<br>
+service_name&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Name&nbsp;of&nbsp;service&nbsp;to&nbsp;enable.<br>
+&nbsp;<br>
+e.g.&nbsp;Make&nbsp;sure&nbsp;slapd&nbsp;is&nbsp;running:<br>
+&gt;&gt;&gt;&nbsp;<a href="#-check_service_enabled">check_service_enabled</a>("ldap")</tt></dd></dl>
+ <dl><dt><a name="-log"><strong>log</strong></a>(level, message)</dt><dd><tt>Logs&nbsp;the&nbsp;message&nbsp;string&nbsp;to&nbsp;stdout&nbsp;and&nbsp;syslog,&nbsp;if&nbsp;the&nbsp;level&nbsp;is&nbsp;below<br>
+that&nbsp;of&nbsp;the&nbsp;given&nbsp;verbosities.<br>
+&nbsp;<br>
+level&nbsp;:&nbsp;integer<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Level&nbsp;to&nbsp;log&nbsp;at.&nbsp;If&nbsp;the&nbsp;current&nbsp;logging&nbsp;level&nbsp;is&nbsp;less&nbsp;than&nbsp;or&nbsp;equal<br>
+&nbsp;&nbsp;&nbsp;&nbsp;to&nbsp;level,&nbsp;then&nbsp;the&nbsp;message&nbsp;is&nbsp;logged,&nbsp;otherwise&nbsp;it&nbsp;is&nbsp;discarded.<br>
+&nbsp;<br>
+message&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Message&nbsp;to&nbsp;log.<br>
+&nbsp;<br>
+e.g.&nbsp;log&nbsp;an&nbsp;error:<br>
+&gt;&gt;&gt;&nbsp;<a href="#-log">log</a>(LOG_ERROR,&nbsp;"An&nbsp;error&nbsp;occured!")</tt></dd></dl>
+ <dl><dt><a name="-release_lock"><strong>release_lock</strong></a>(lock_name)</dt><dd><tt>Releases&nbsp;a&nbsp;lock&nbsp;aquired&nbsp;by&nbsp;<a href="#-acquire_lock">acquire_lock</a>()&nbsp;by&nbsp;deleting&nbsp;the&nbsp;file<br>
+lock_name.&nbsp;An&nbsp;exception&nbsp;is&nbsp;thrown&nbsp;if&nbsp;the&nbsp;lock&nbsp;was&nbsp;not&nbsp;already&nbsp;acquired.<br>
+&nbsp;<br>
+lock_name&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Filename&nbsp;for&nbsp;the&nbsp;lock.<br>
+&nbsp;<br>
+e.g.&nbsp;Unlock&nbsp;a&nbsp;copy&nbsp;operation:<br>
+&gt;&gt;&gt;&nbsp;<a href="#-release_lock">release_lock</a>("/var/lock/pysysconf/copylock")</tt></dd></dl>
+ <dl><dt><a name="-shell_command"><strong>shell_command</strong></a>(command)</dt><dd><tt>Run&nbsp;an&nbsp;external&nbsp;command&nbsp;in&nbsp;a&nbsp;shell.<br>
+&nbsp;<br>
+command&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Commandline&nbsp;to&nbsp;run.&nbsp;Will&nbsp;be&nbsp;passed&nbsp;to&nbsp;a&nbsp;subshell.<br>
+&nbsp;<br>
+return&nbsp;:&nbsp;integer<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Returns&nbsp;the&nbsp;exit&nbsp;status&nbsp;of&nbsp;the&nbsp;command.<br>
+&nbsp;<br>
+e.g.&nbsp;Restart&nbsp;apache:<br>
+&gt;&gt;&gt;&nbsp;<a href="#-shell_command">shell_command</a>("/sbin/service&nbsp;httpd&nbsp;restart")</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>LOG_ACTION</strong> = 2<br>
+<strong>LOG_ERROR</strong> = 1<br>
+<strong>LOG_NONE</strong> = 0<br>
+<strong>LOG_NO_ACTION</strong> = 3<br>
+<strong>classes</strong> = ['linux2', 'stage.stanford.edu', 'stage']<br>
+<strong>hostname</strong> = 'stage.stanford.edu'<br>
+<strong>input_dir</strong> = '.'<br>
+<strong>syslog_facility</strong> = 8<br>
+<strong>syslog_priority</strong> = 6<br>
+<strong>syslog_verbosity</strong> = 2<br>
+<strong>verbosity</strong> = 1</td></tr></table>
+</body></html>

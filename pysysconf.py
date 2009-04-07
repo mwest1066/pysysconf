@@ -24,7 +24,7 @@ exceptions fall through.
 
 ##############################################################################
 # imports
-import sys, socket, os, md5, datetime, stat, errno, pwd, grp, types
+import sys, socket, os, md5, datetime, stat, errno, pwd, grp, types, syslog
 
 ##############################################################################
 # logging
@@ -36,6 +36,10 @@ LOG_NONE, LOG_ERROR, LOG_ACTION, LOG_NO_ACTION, = range(4)
 
 verbosity = LOG_ERROR
 syslog_verbosity = LOG_ACTION
+syslog_priority = syslog.LOG_INFO
+syslog_facility = syslog.LOG_USER
+
+syslog.openlog("pysysconf")
 
 ##############################################################################
 # classes support
@@ -53,26 +57,28 @@ input_dir = sys.path[0]
 # internal errors
 class PysysconfError(Exception):
     """Class used for all exceptions raised directly by this module."""
-    
+
 ##############################################################################
 # public functions
 
-def log(level, info):
-    """Logs the info string to stdout and syslog, if the level is below
+def log(level, message):
+    """Logs the message string to stdout and syslog, if the level is below
     that of the given verbosities.
 
     level : integer
         Level to log at. If the current logging level is less than or equal
         to level, then the message is logged, otherwise it is discarded.
 
-    info : string
+    message : string
         Message to log.
 
     e.g. log an error:
     >>> log(LOG_ERROR, "An error occured!")
     """
     if level <= verbosity:
-        print info
+        print message
+    if level <= syslog_verbosity:
+        syslog.syslog(syslog_priority | syslog_facility, message)
 
 def acquire_lock(lock_name):
     """Acquires the lock referenced by the given filename by creating the
