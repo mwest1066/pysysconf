@@ -1,6 +1,6 @@
 Metadata-Version: 1.0
 Name: pysysconf
-Version: 0.2.3
+Version: 0.2.4
 Summary: Python System Configuration library
 Home-page: http://www.stanford.edu/~westm/code/pysysconf/
 Author: Matt West

@@ -483,21 +483,39 @@ def shell_command(command):
     log(LOG_ACTION, "Running \"" + command + "\"")
     return os.system(command)
 
-def check_service_enabled(service_name):
+def check_service_enabled(service_name, needs_restart = False,
+                          needs_reload = False):
     """Ensure that the given service is currently running and
     will start on boot.
 
     service_name : string
         Name of service to enable.
 
+    needs_restart : boolean
+        (optional: default = False)
+        Whether the service should be restarted if it is already
+        running.
+
+    needs_reload : boolean
+        (optional: default = False)
+        Whether the service should be reloaded if it is already
+        running. Is superceded by needs_restart.
+
     e.g. Make sure slapd is running:
     >>> check_service_enabled("ldap")
     """
     if shell_command("/sbin/service " + service_name + " status > /dev/null"):
-        log(LOG_ACTION, "Starting " + service_name);
+        log(LOG_ACTION, "Starting " + service_name)
         shell_command("/sbin/service " + service_name + " start")
     else:
         log(LOG_NO_ACTION, service_name + " is already running")
+        if needs_restart:
+            log(LOG_ACTION, "Restarting " + service_name)
+            shell_command("/sbin/service " + service_name + " restart")
+        else:
+            if needs_reload:
+                log(LOG_ACTION, "Reloading " + service_name)
+                shell_command("/sbin/service " + service_name + " reload")
     if shell_command("/sbin/chkconfig --list " + service_name \
                          + " | grep -q \":on\""):
         log(LOG_ACTION, "Turning on " + service_name);
@@ -528,7 +546,8 @@ def check_service_disabled(service_name):
     else:
         log(LOG_NO_ACTION, service_name + " is already off")
 
-def check_service_status(service_name, should_be_running):
+def check_service_status(service_name, should_be_running,
+                         needs_restart = False, needs_reload = False):
     """Do either check_service_enabled, if should_be_running is
     True, or check_service_disabled, if should_be_running is False.
 
@@ -538,11 +557,21 @@ def check_service_status(service_name, should_be_running):
     should_be_running : boolean
         Whether the service should be enabled or not.
 
+    needs_restart : boolean
+        (optional: default = False)
+        Whether the service should be restarted if it is already
+        running.
+
+    needs_reload : boolean
+        (optional: default = False)
+        Whether the service should be reloaded if it is already
+        running. Is superceded by needs_restart.
+
     e.g. Make sure apache is running only on webservers:
     >>> check_service_status("httpd", "server_web" in classes)
     """
     if should_be_running:
-        check_service_enabled(service_name)
+        check_service_enabled(service_name, needs_restart, needs_reload)
     else:
         check_service_disabled(service_name)
 

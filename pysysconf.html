@@ -355,15 +355,25 @@ service_name&nbsp;:&nbsp;string<br>
 &nbsp;<br>
 e.g.&nbsp;Make&nbsp;sure&nbsp;apache&nbsp;is&nbsp;not&nbsp;running:<br>
 &gt;&gt;&gt;&nbsp;<a href="#-check_service_disabled">check_service_disabled</a>("httpd")</tt></dd></dl>
- <dl><dt><a name="-check_service_enabled"><strong>check_service_enabled</strong></a>(service_name)</dt><dd><tt>Ensure&nbsp;that&nbsp;the&nbsp;given&nbsp;service&nbsp;is&nbsp;currently&nbsp;running&nbsp;and<br>
+ <dl><dt><a name="-check_service_enabled"><strong>check_service_enabled</strong></a>(service_name, needs_restart<font color="#909090">=False</font>, needs_reload<font color="#909090">=False</font>)</dt><dd><tt>Ensure&nbsp;that&nbsp;the&nbsp;given&nbsp;service&nbsp;is&nbsp;currently&nbsp;running&nbsp;and<br>
 will&nbsp;start&nbsp;on&nbsp;boot.<br>
 &nbsp;<br>
 service_name&nbsp;:&nbsp;string<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Name&nbsp;of&nbsp;service&nbsp;to&nbsp;enable.<br>
 &nbsp;<br>
+needs_restart&nbsp;:&nbsp;boolean<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;False)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;the&nbsp;service&nbsp;should&nbsp;be&nbsp;restarted&nbsp;if&nbsp;it&nbsp;is&nbsp;already<br>
+&nbsp;&nbsp;&nbsp;&nbsp;running.<br>
+&nbsp;<br>
+needs_reload&nbsp;:&nbsp;boolean<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;False)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;the&nbsp;service&nbsp;should&nbsp;be&nbsp;reloaded&nbsp;if&nbsp;it&nbsp;is&nbsp;already<br>
+&nbsp;&nbsp;&nbsp;&nbsp;running.&nbsp;Is&nbsp;superceded&nbsp;by&nbsp;needs_restart.<br>
+&nbsp;<br>
 e.g.&nbsp;Make&nbsp;sure&nbsp;slapd&nbsp;is&nbsp;running:<br>
 &gt;&gt;&gt;&nbsp;<a href="#-check_service_enabled">check_service_enabled</a>("ldap")</tt></dd></dl>
- <dl><dt><a name="-check_service_status"><strong>check_service_status</strong></a>(service_name, should_be_running)</dt><dd><tt>Do&nbsp;either&nbsp;check_service_enabled,&nbsp;if&nbsp;should_be_running&nbsp;is<br>
+ <dl><dt><a name="-check_service_status"><strong>check_service_status</strong></a>(service_name, should_be_running, needs_restart<font color="#909090">=False</font>, needs_reload<font color="#909090">=False</font>)</dt><dd><tt>Do&nbsp;either&nbsp;check_service_enabled,&nbsp;if&nbsp;should_be_running&nbsp;is<br>
 True,&nbsp;or&nbsp;check_service_disabled,&nbsp;if&nbsp;should_be_running&nbsp;is&nbsp;False.<br>
 &nbsp;<br>
 service_name&nbsp;:&nbsp;string<br>
@@ -371,6 +381,16 @@ service_name&nbsp;:&nbsp;string<br>
 &nbsp;<br>
 should_be_running&nbsp;:&nbsp;boolean<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;the&nbsp;service&nbsp;should&nbsp;be&nbsp;enabled&nbsp;or&nbsp;not.<br>
+&nbsp;<br>
+needs_restart&nbsp;:&nbsp;boolean<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;False)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;the&nbsp;service&nbsp;should&nbsp;be&nbsp;restarted&nbsp;if&nbsp;it&nbsp;is&nbsp;already<br>
+&nbsp;&nbsp;&nbsp;&nbsp;running.<br>
+&nbsp;<br>
+needs_reload&nbsp;:&nbsp;boolean<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;False)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;the&nbsp;service&nbsp;should&nbsp;be&nbsp;reloaded&nbsp;if&nbsp;it&nbsp;is&nbsp;already<br>
+&nbsp;&nbsp;&nbsp;&nbsp;running.&nbsp;Is&nbsp;superceded&nbsp;by&nbsp;needs_restart.<br>
 &nbsp;<br>
 e.g.&nbsp;Make&nbsp;sure&nbsp;apache&nbsp;is&nbsp;running&nbsp;only&nbsp;on&nbsp;webservers:<br>
 &gt;&gt;&gt;&nbsp;<a href="#-check_service_status">check_service_status</a>("httpd",&nbsp;"server_web"&nbsp;in&nbsp;classes)</tt></dd></dl>

@@ -1,6 +1,6 @@
 from distutils.core import setup
 setup(name = "pysysconf",
-      version = "0.2.3",
+      version = "0.2.4",
       description = "Python System Configuration library",
       author = "Matt West",
       author_email = "westm@stanford.edu",
