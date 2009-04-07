@@ -100,7 +100,7 @@ def acquire_lock(lock_name):
         os.close(fd)
     except EnvironmentError, e:
         if e.filename == None:
-            log(LOG_ERROR, "Error: " + e.strerror)
+            log(LOG_ERROR, "Error: " + str(e))
         else:
             log(LOG_ERROR, "Error: " + e.filename + ": " + e.strerror)
     log(LOG_ACTION, "Acquired lock " + lock_name)
@@ -120,7 +120,7 @@ def release_lock(lock_name):
         os.unlink(lock_name)
     except EnvironmentError, e:
         if e.filename == None:
-            log(LOG_ERROR, "Error: " + e.strerror)
+            log(LOG_ERROR, "Error: " + str(e))
         else:
             log(LOG_ERROR, "Error: " + e.filename + ": " + e.strerror)
     log(LOG_ACTION, "Released lock " + lock_name)
@@ -205,11 +205,11 @@ def check_copy(src, dst, uid = None, gid = None,
 			or change_made
     except EnvironmentError, e:
         if e.filename == None:
-            log(LOG_ERROR, "Error: " + e.strerror)
+            log(LOG_ERROR, "Error: " + str(e))
         else:
             log(LOG_ERROR, "Error: " + e.filename + ": " + e.strerror)
     except PysysconfError, e:
-        log(LOG_ERROR, "Error: " + e.strerror)
+        log(LOG_ERROR, "Error: " + str(e))
     return change_made
 
 def check_link(src, dst, uid = None, gid = None):
@@ -263,11 +263,11 @@ def check_link(src, dst, uid = None, gid = None):
         change_made = _chkstat(dst, uid, gid, None) or change_made
     except EnvironmentError, e:
         if e.filename == None:
-            log(LOG_ERROR, "Error: " + e.strerror)
+            log(LOG_ERROR, "Error: " + str(e))
         else:
             log(LOG_ERROR, "Error: " + e.filename + ": " + e.strerror)
     except PysysconfError, e:
-        log(LOG_ERROR, "Error: " + e.strerror)
+        log(LOG_ERROR, "Error: " + str(e))
     return change_made
 
 def check_file_exists(dst, uid = None, gid = None, perm = None,
@@ -331,11 +331,11 @@ def check_file_exists(dst, uid = None, gid = None, perm = None,
         change_made = _chkstat(dst, uid, gid, perm) or change_made
     except EnvironmentError, e:
         if e.filename == None:
-            log(LOG_ERROR, "Error: " + e.strerror)
+            log(LOG_ERROR, "Error: " + str(e))
         else:
             log(LOG_ERROR, "Error: " + e.filename + ": " + e.strerror)
     except PysysconfError, e:
-        log(LOG_ERROR, "Error: " + e.strerror)
+        log(LOG_ERROR, "Error: " + str(e))
     return change_made
 
 def check_dir_exists(dst, uid = None, gid = None, perm = None,
@@ -398,11 +398,11 @@ def check_dir_exists(dst, uid = None, gid = None, perm = None,
         change_made = _chkstat(dst, uid, gid, perm) or change_made
     except EnvironmentError, e:
         if e.filename == None:
-            log(LOG_ERROR, "Error: " + e.strerror)
+            log(LOG_ERROR, "Error: " + str(e))
         else:
             log(LOG_ERROR, "Error: " + e.filename + ": " + e.strerror)
     except PysysconfError, e:
-        log(LOG_ERROR, "Error: " + e.strerror)
+        log(LOG_ERROR, "Error: " + str(e))
     return change_made
 
 def check_not_exists(dst, test = None, follow_links = False, backup = True):
@@ -461,11 +461,11 @@ def check_not_exists(dst, test = None, follow_links = False, backup = True):
 	    change_made = _remove_by_test(dst, test, follow_links, backup)
     except EnvironmentError, e:
         if e.filename == None:
-            log(LOG_ERROR, "Error: " + e.strerror)
+            log(LOG_ERROR, "Error: " + str(e))
         else:
             log(LOG_ERROR, "Error: " + e.filename + ": " + e.strerror)
     except PysysconfError, e:
-        log(LOG_ERROR, "Error: " + e.strerror)
+        log(LOG_ERROR, "Error: " + str(e))
     return change_made
 
 def shell_command(command):
@@ -631,8 +631,8 @@ def _copy_file(src, dst, backup, log_no_action = True):
             src_stat = os.lstat(src)
             src_mode = src_stat.st_mode
             if not stat.S_ISREG(src_mode):
-                raise PyError("src " + src + " as we were watching " \
-                              "(expected a regular file)")
+                raise PyError("src " + src + " changed as we were " \
+                              "watching (expected a regular file)")
             if dst_stat.st_size == src_stat.st_size:
                 if _md5sum(dst) == _md5sum(src):
                     need_copy = False
@@ -682,8 +682,8 @@ def _copy_link(src, dst, backup, log_no_action = True):
     src_stat = os.lstat(src)
     src_mode = src_stat.st_mode
     if not stat.S_ISLNK(src_mode):
-        raise PyError("src " + src + " as we were watching " \
-                      "(expected a symlink)")
+        raise PyError("src " + src + " changed as we were " \
+                      "watching (expected a symlink)")
     srclink = os.readlink(src)
     need_copy = True
     if dst_exists:
