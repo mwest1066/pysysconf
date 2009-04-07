@@ -457,6 +457,8 @@ def check_not_exists(dst, test = None, follow_links = False, backup = True):
 	    if dst_exists:
 		change_made = True
 		_remove(dst, backup)
+            else:
+                log(LOG_NO_ACTION, dst + " already did not exist")
 	else:
 	    change_made = _remove_by_test(dst, test, follow_links, backup)
     except EnvironmentError, e:
