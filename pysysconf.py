@@ -235,7 +235,7 @@ def check_copy(src, dst, uid = None, gid = None,
         log(LOG_ERROR, "Error: " + str(e))
     return change_made
 
-def check_link(src, dst, uid = None, gid = None):
+def check_link(src, dst, uid = None, gid = None, backup = True):
     """Check that dst is a symlink to src.
 
     src : string
@@ -252,6 +252,10 @@ def check_link(src, dst, uid = None, gid = None):
     gid : string, integer, or None
         (optional: default = None)
         Groupname or GID, as for uid.
+
+    backup : boolean
+        (optional: default = True)
+        Whether to backup dst if it will be overwritten.
 
     return : boolean
 	Whether any change was made to dst.

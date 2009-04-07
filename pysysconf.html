@@ -301,7 +301,7 @@ return&nbsp;:&nbsp;boolean<br>
 &nbsp;<br>
 e.g.&nbsp;Check&nbsp;that&nbsp;/etc/nologin&nbsp;exists&nbsp;and&nbsp;is&nbsp;owned&nbsp;by&nbsp;root:<br>
 &gt;&gt;&gt;&nbsp;<a href="#-check_file_exists">check_file_exists</a>("/etc/nologin",&nbsp;uid&nbsp;=&nbsp;"root")</tt></dd></dl>
- <dl><dt><a name="-check_link"><strong>check_link</strong></a>(src, dst, uid<font color="#909090">=None</font>, gid<font color="#909090">=None</font>)</dt><dd><tt>Check&nbsp;that&nbsp;dst&nbsp;is&nbsp;a&nbsp;symlink&nbsp;to&nbsp;src.<br>
+ <dl><dt><a name="-check_link"><strong>check_link</strong></a>(src, dst, uid<font color="#909090">=None</font>, gid<font color="#909090">=None</font>, backup<font color="#909090">=True</font>)</dt><dd><tt>Check&nbsp;that&nbsp;dst&nbsp;is&nbsp;a&nbsp;symlink&nbsp;to&nbsp;src.<br>
 &nbsp;<br>
 src&nbsp;:&nbsp;string<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Filename&nbsp;of&nbsp;the&nbsp;source&nbsp;file,&nbsp;symlink,&nbsp;or&nbsp;directory.<br>
@@ -317,6 +317,10 @@ uid&nbsp;:&nbsp;string,&nbsp;integer,&nbsp;or&nbsp;None<br>
 gid&nbsp;:&nbsp;string,&nbsp;integer,&nbsp;or&nbsp;None<br>
 &nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;None)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Groupname&nbsp;or&nbsp;GID,&nbsp;as&nbsp;for&nbsp;uid.<br>
+&nbsp;<br>
+backup&nbsp;:&nbsp;boolean<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;True)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;to&nbsp;backup&nbsp;dst&nbsp;if&nbsp;it&nbsp;will&nbsp;be&nbsp;overwritten.<br>
 &nbsp;<br>
 return&nbsp;:&nbsp;boolean<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;any&nbsp;change&nbsp;was&nbsp;made&nbsp;to&nbsp;dst.<br>
