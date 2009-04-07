@@ -1,9 +1,19 @@
 
+0.3.0 2008-03-23
+
+	- Added SELinux support to set file contexts and booleans.
+
+	- Fix return value and stat data setting for _copy_dir in the case
+	  that the source is an empty directory.
+
+	- Make most arguments of _copy_dir, _chkstat, and _chkstatsrc
+	  non-optional.
+	
 0.2.8 2007-07-02
 
 	- Update to python 2.5
 	
-0.2.7
+0.2.7 2005-11-19
 
 	- Log when removing files with check_not_exists()
 

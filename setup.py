@@ -1,9 +1,9 @@
 from distutils.core import setup
 setup(name = "pysysconf",
-      version = "0.2.8",
+      version = "0.3.0",
       description = "Python System Configuration library",
-      author = "Matt West",
-      author_email = "westm@stanford.edu",
-      url = "http://www.stanford.edu/~westm/code/pysysconf/",
+      author = "Matthew West",
+      author_email = "mwest@illinois.edu",
+      url = "http://lagrange.mechse.illinois.edu/mwest/pysysconf/",
       py_modules = ["pysysconf"],
       )
