@@ -958,18 +958,18 @@ def _chkstat(dst, uid = None, gid = None, perm = None):
     need_chown = False
     did_action = False
     if uid != None:
-        if type(uid) is types.StringType:
-            uid = pwd.getpwnam(uid)[0]
-        if not(type(uid) is types.IntType):
+        if isinstance(uid, str):
+            uid = pwd.getpwnam(uid)[2]
+        if not isinstance(uid, int):
             raise PysysconfError("Bad uid specificiation: " + str(uid))
         if uid != dst_uid:
             need_chown = True
     else:
         uid = dst_uid
     if gid != None:
-        if type(gid) is types.StringType:
-            gid = grp.getgrnam(gid)[0]
-        if not(type(gid) is types.IntType):
+        if isinstance(gid, str):
+            gid = grp.getgrnam(gid)[2]
+        if not isinstance(gid, int):
             raise PysysconfError("Bad gid specificiation: " + str(uid))
         if gid != dst_gid:
             need_chown = True
@@ -981,9 +981,9 @@ def _chkstat(dst, uid = None, gid = None, perm = None):
         os.chown(dst, uid, gid)
         did_action = True
     if perm != None:
-        if type(perm) is types.StringType:
+        if isinstance(perm, str):
             perm = int(perm, 8)
-        if not(type(perm) is types.IntType):
+        if not isinstance(perm, int):
             raise PysysconfError("Bad perm specificiation: " + str(perm))
         if dst_perm != perm:
             log(LOG_ACTION, "Changing permissions of %s from %o to %o" \
