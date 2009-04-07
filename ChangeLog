@@ -1,4 +1,23 @@
 
+0.2.6
+
+	- Added a test_regexp class to enable check_not_exists by
+	  filename regexp match.
+
+	- Changed default argument "backup" to check_not_exists() to
+	  default to False.
+
+	- Altered aquire_lock() to write the pid of the process into
+	  the lockfile. If the lockfile already exists, then the pid
+	  is read and if that process doesn't exist then the lockfile
+	  is forcibly removed. This should fix the problem where a
+	  crash of pysysconf would require manual lockfile removal.
+
+	- Removed classes support, as it's easier to just define boolean
+	  variables directly.
+
+	- Added GPL header and LICENSE file.
+
 0.2.5 2005-03-10
 
 	- Log no action if a check_not_exist already doesn't exist.
