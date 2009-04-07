@@ -484,10 +484,13 @@ def check_not_exists(dst, test = None, follow_links = False, backup = False):
 	    if dst_exists:
 		change_made = True
 		_remove(dst, backup)
+                log(LOG_ACTION, dst + " removed")
             else:
                 log(LOG_NO_ACTION, dst + " already did not exist")
 	else:
 	    change_made = _remove_by_test(dst, test, follow_links, backup)
+            if not change_made:
+                log(LOG_NO_ACTION, dst + " did not have any removals")
     except EnvironmentError, e:
         if e.filename == None:
             log(LOG_ERROR, "Error: " + str(e))
@@ -1125,6 +1128,7 @@ def _remove_by_test(dst, test, follow_links = False, backup = True):
 	f_mode = f_stat.st_mode
 	if test.test(f_name, f_stat):
 	    _remove(f_name, backup)
+            log(LOG_ACTION, f_name + " removed")
 	else:
 	    if stat.S_ISDIR(f_mode):
 	    	change_made = _remove_by_test(f_name, test, follow_links,
