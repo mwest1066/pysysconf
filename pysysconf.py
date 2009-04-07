@@ -1042,7 +1042,6 @@ def _copy_dir(src, dst, uid, gid, perm, umask, dmask, se_context,
     if not stat.S_ISDIR(src_mode):
         raise PyError("src " + src + " changed as we were " \
                       "watching (expected a directory)")
-    src_dir = os.listdir(src)
     dst_exists = True;
     try:
         dst_stat = os.lstat(dst)
@@ -1055,19 +1054,21 @@ def _copy_dir(src, dst, uid, gid, perm, umask, dmask, se_context,
     if dst_exists and not stat.S_ISDIR(dst_mode):
         _remove(dst)
         dst_exists = False
+    did_copy = False
     if not dst_exists:
         log(LOG_ACTION, "Copying " + src + " to " + dst)
         os.mkdir(dst)
+        did_copy = True
     if _chkstatsrc(src, dst, uid, gid, perm,
                    umask, dmask, se_context,
                    se_user, se_role, se_type, se_level):
         did_copy = True
     dst_dir = os.listdir(dst)
+    src_dir = os.listdir(src)
     dst_dir.sort()
     src_dir.sort()
     dst_i = 0;
     src_i = 0;
-    did_copy = False
     while True:
         if dst_i < len(dst_dir):
             dst_entry = dst_dir[dst_i]
