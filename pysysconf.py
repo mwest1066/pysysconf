@@ -532,6 +532,24 @@ def check_service_disabled(service_name):
     else:
         log(LOG_NO_ACTION, service_name + " is already off")
 
+def check_service_status(service_name, should_be_running):
+    """Do either check_service_enabled, if should_be_running is
+    True, or check_service_disabled, if should_be_running is False.
+
+    service_name : string
+        Name of service to disable.
+
+    should_be_running : boolean
+        Whether the service should be enabled or not.
+
+    e.g. Make sure apache is running only on webservers:
+    >>> check_service_status("httpd", "server_web" in classes)
+    """
+    if should_be_running:
+        check_service_enabled(service_name)
+    else:
+        check_service_disabled(service_name)
+
 def check_rpm_installed(rpm_name):
     """Ensure that the given rpm is installed, using yum for installation.
 

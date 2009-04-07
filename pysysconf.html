@@ -363,6 +363,17 @@ service_name&nbsp;:&nbsp;string<br>
 &nbsp;<br>
 e.g.&nbsp;Make&nbsp;sure&nbsp;slapd&nbsp;is&nbsp;running:<br>
 &gt;&gt;&gt;&nbsp;<a href="#-check_service_enabled">check_service_enabled</a>("ldap")</tt></dd></dl>
+ <dl><dt><a name="-check_service_status"><strong>check_service_status</strong></a>(service_name, should_be_running)</dt><dd><tt>Do&nbsp;either&nbsp;check_service_enabled,&nbsp;if&nbsp;should_be_running&nbsp;is<br>
+True,&nbsp;or&nbsp;check_service_disabled,&nbsp;if&nbsp;should_be_running&nbsp;is&nbsp;False.<br>
+&nbsp;<br>
+service_name&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Name&nbsp;of&nbsp;service&nbsp;to&nbsp;disable.<br>
+&nbsp;<br>
+should_be_running&nbsp;:&nbsp;boolean<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;the&nbsp;service&nbsp;should&nbsp;be&nbsp;enabled&nbsp;or&nbsp;not.<br>
+&nbsp;<br>
+e.g.&nbsp;Make&nbsp;sure&nbsp;apache&nbsp;is&nbsp;running&nbsp;only&nbsp;on&nbsp;webservers:<br>
+&gt;&gt;&gt;&nbsp;<a href="#-check_service_status">check_service_status</a>("httpd",&nbsp;"server_web"&nbsp;in&nbsp;classes)</tt></dd></dl>
  <dl><dt><a name="-log"><strong>log</strong></a>(level, message)</dt><dd><tt>Logs&nbsp;the&nbsp;message&nbsp;string&nbsp;to&nbsp;stdout&nbsp;and&nbsp;syslog,&nbsp;if&nbsp;the&nbsp;level&nbsp;is&nbsp;below<br>
 that&nbsp;of&nbsp;the&nbsp;given&nbsp;verbosities.<br>
 &nbsp;<br>

@@ -1,7 +1,12 @@
-pyconf is a library for system configuration tasks, modelled on cfengine.
+pysysconf is a library for system configuration tasks, modelled on cfengine.
 
 To install, either install the rpm, or do:
-
 python setup.py install
 
-Rune test_pysysconf.py to do some unit tests.
+Run test_pysysconf.py to do some unit tests.
+
+Changelog:
+
+0.2.3 2005-02-16 15:35
+
+	- Add the check_service_status command.
