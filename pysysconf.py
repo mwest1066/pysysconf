@@ -50,10 +50,6 @@ classes.append(hostname)
 classes.append(hostname.split('.')[0])
 
 ##############################################################################
-# Base directory of script
-input_dir = sys.path[0]
-
-##############################################################################
 # internal errors
 class PysysconfError(Exception):
     """Class used for all exceptions raised directly by this module."""
