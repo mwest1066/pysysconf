@@ -1013,8 +1013,11 @@ def _chkstat(dst, uid = None, gid = None, perm = None):
         if dst_perm != perm:
             log(LOG_ACTION, "Changing permissions of %s from %o to %o" \
 				% (dst, dst_perm, perm))
-            os.chmod(dst, perm)
-            did_action = True
+            try:
+                os.chmod(dst, perm)
+                did_action = True
+            except OSError, e:
+                raise PysysconfError("Could not chmod " + dst + " to " + str(perm))
     return did_action
 
 def _chkstatsrc(src, dst, uid = None, gid = None,
