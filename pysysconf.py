@@ -59,14 +59,6 @@ syslog_facility = syslog.LOG_USER
 syslog.openlog("pysysconf")
 
 ##############################################################################
-# classes support
-classes = []
-classes.append(sys.platform)
-hostname = socket.getfqdn()
-classes.append(hostname)
-classes.append(hostname.split('.')[0])
-
-##############################################################################
 # internal errors
 class PysysconfError(Exception):
     """Class used for all exceptions raised directly by this module."""
@@ -601,7 +593,7 @@ def check_service_status(service_name, should_be_running,
         running. Is superceded by needs_restart.
 
     e.g. Make sure apache is running only on webservers:
-    >>> check_service_status("httpd", "server_web" in classes)
+    >>> check_service_status("httpd", server_web)
     """
     if should_be_running:
         check_service_enabled(service_name, needs_restart, needs_reload)
