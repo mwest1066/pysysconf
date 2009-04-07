@@ -1,4 +1,8 @@
 
+0.2.8 2007-07-02
+
+	- Update to python 2.5
+	
 0.2.7
 
 	- Log when removing files with check_not_exists()

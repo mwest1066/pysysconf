@@ -1,1 +1,9 @@
 add check_rpm_not_installed()
+
+we often have:
+if server_XXX:
+	check_copy("YYY", "/etc/cron/YYY")
+else:
+	check_not_exists("/etc/cron/YYY")
+To fix this, add an only_if optional argument to check_copy, which if
+true will act as a copy, and if false will act as a check_not_exists.
