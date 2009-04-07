@@ -1,29 +1,30 @@
 """Cfengine-style commands for system configuration.
 
-PyConf provides a number of useful high-level functions for doing
+PySysConf provides a number of useful high-level functions for doing
 system configuration. These are modeled on the commands in cfengine.
 
 Logging:
 
-All pyConf commands will log to stdout and syslog. The verbosity is
-controlled by setting the variables pyconf.verbosity (for stdout) and
-pyconf.syslog_verbosity (for syslog). These should be set to LOG_NONE,
-LOG_ERROR, LOG_ACTION, or LOG_NO_ACTION, in increasing order of
-verbosity.
+All PySysConf commands will log to stdout and syslog. The verbosity is
+controlled by setting the variables pysysconf.verbosity (for stdout)
+and pysysconf.syslog_verbosity (for syslog). These should be set to
+LOG_NONE, LOG_ERROR, LOG_ACTION, or LOG_NO_ACTION, in increasing order
+of verbosity.
 
 Exception handling:
 
 Internal functions (those starting with an underscore) may raise
-exceptions, including the local class PyConfError, but they will not
-catch any exceptions caused by unexpected errors. Externally visible
-functions (those without underscores) catch and log EnvironmentError
-and PyConfError exceptions, and let other exceptions fall through.
+exceptions, including the local class PySysConfError, but they will
+not catch any exceptions caused by unexpected errors. Externally
+visible functions (those without underscores) catch and log
+EnvironmentError and PySysConfError exceptions, and let other
+exceptions fall through.
 
 """
 
 ##############################################################################
 # imports
-import socket, os, md5, datetime, stat, errno, pwd, grp, types
+import sys, socket, os, md5, datetime, stat, errno, pwd, grp, types
 
 ##############################################################################
 # logging
@@ -39,13 +40,14 @@ syslog_verbosity = LOG_ACTION
 ##############################################################################
 # classes support
 classes = []
+classes.append(sys.platform)
 hostname = socket.getfqdn()
 classes.append(hostname)
 classes.append(hostname.split('.')[0])
 
 ##############################################################################
 # internal errors
-class PyConfError(Exception):
+class PysysconfError(Exception):
     """Class used for all exceptions raised directly by this module."""
     
 ##############################################################################
@@ -68,11 +70,11 @@ def log(level, info):
     if level <= verbosity:
         print info
 
-def acquire_lock(lockname):
-    """Acquires the lock referenced by the given filename.
-    The lockname must be a file on a local (non-NFS) filesystem.
+def acquire_lock(lock_name):
+    """Acquires the lock referenced by the given filename by creating the
+    file lock_name. The parent directory of lock_name must already exist.
     
-    lockname : string
+    lock_name : string
         Filename for the lock.
 
     return : boolean
@@ -80,13 +82,13 @@ def acquire_lock(lockname):
         otherwise False.
 
     e.g. Lock a copy operation:
-    >>> acquire_lock("/var/lock/pyconf/copylock")
+    >>> acquire_lock("/var/lock/pysysconf/copylock")
     """
     try:
-        fd = os.open(lockname, os.O_CREAT | os.O_EXCL)
+        fd = os.open(lock_name, os.O_CREAT | os.O_EXCL)
     except EnvironmentError, e:
         log(LOG_ERROR, "Error: unable to acquire lock "
-            + lockname + ": " + e.strerror)
+            + lock_name + ": " + e.strerror)
         return False
     try:
         os.close(fd)
@@ -95,28 +97,29 @@ def acquire_lock(lockname):
             log(LOG_ERROR, "Error: " + e.strerror)
         else:
             log(LOG_ERROR, "Error: " + e.filename + ": " + e.strerror)
-    log(LOG_ACTION, "Acquired lock " + lockname)
+    log(LOG_ACTION, "Acquired lock " + lock_name)
     return True
 
-def release_lock(lockname):
-    """Releases a lock aquired by acquire_lock().
+def release_lock(lock_name):
+    """Releases a lock aquired by acquire_lock() by deleting the file
+    lock_name. An exception is thrown if the lock was not already acquired.
 
-    lockname : string
+    lock_name : string
         Filename for the lock.
 
     e.g. Unlock a copy operation:
-    >>> release_lock("/var/lock/pyconf/copylock")
+    >>> release_lock("/var/lock/pysysconf/copylock")
     """
     try:
-        os.unlink(lockname)
+        os.unlink(lock_name)
     except EnvironmentError, e:
         if e.filename == None:
             log(LOG_ERROR, "Error: " + e.strerror)
         else:
             log(LOG_ERROR, "Error: " + e.filename + ": " + e.strerror)
-    log(LOG_ACTION, "Released lock " + lockname)
+    log(LOG_ACTION, "Released lock " + lock_name)
 
-def copy(src, dst, uid = None, gid = None,
+def check_copy(src, dst, uid = None, gid = None,
          perm = None, umask = None, dmask = None, backup = True,
          purge = False):
     """Check the copy of a file, symlink, or directory.
@@ -168,44 +171,106 @@ def copy(src, dst, uid = None, gid = None,
         Whether to delete files in dst (if it is a directory) if
         they are not present in src.
 
+    return : boolean
+	Whether any change was made to dst.
+
     e.g. Check that a single file is a copy:
-    >>> copy("main.cf.server", "/etc/sendmail/main.cf")
+    >>> check_copy("main.cf.server", "/etc/sendmail/main.cf")
 
     e.g. Check that a directory is an exact copy, without backup:
-    >>> copy("ppds", "/etc/cups/ppds", purge = True, backup = False)
+    >>> check_copy("ppds", "/etc/cups/ppds", purge = True, backup = False)
     """
+    change_made = True
     try:
-        srcstat = os.lstat(src)
-        srcmode = srcstat[stat.ST_MODE]
-        if stat.S_ISREG(srcmode):
-            _copy_file(src, dst, backup)
-        elif stat.S_ISLNK(srcmode):
-            _copy_file(src, dst, backup)
-        elif stat.S_ISDIR(srcmode):
-            _copy_dir(src, dst, uid, gid, perm,
-                      umask, dmask, backup, purge)
+        src_stat = os.lstat(src)
+        src_mode = src_stat.st_mode
+        if stat.S_ISREG(src_mode):
+            change_made = _copy_file(src, dst, backup)
+        elif stat.S_ISLNK(src_mode):
+            change_made = _copy_file(src, dst, backup)
+        elif stat.S_ISDIR(src_mode):
+            change_made = _copy_dir(src, dst, uid, gid, perm,
+                                    umask, dmask, backup, purge)
         else:
-            raise PyConfError("src " + src + " is not" \
+            raise PysysconfError("src " + src + " is not" \
                               " a regular file, a symlink," \
                               " or a directory")
-        _chkstatsrc(src, dst, uid, gid,
-                    perm, umask, dmask)
+        change_made = _chkstatsrc(src, dst, uid, gid, perm, umask, dmask) \
+			or change_made
     except EnvironmentError, e:
         if e.filename == None:
             log(LOG_ERROR, "Error: " + e.strerror)
         else:
             log(LOG_ERROR, "Error: " + e.filename + ": " + e.strerror)
-    except PyConfError, e:
+    except PysysconfError, e:
         log(LOG_ERROR, "Error: " + e.strerror)
+    return change_made
 
-def link(src, dst, uid = None, gid = None, perm = None):
-    """Checks that dst is a symlink to src.
+def check_link(src, dst, uid = None, gid = None):
+    """Check that dst is a symlink to src.
 
     src : string
         Filename of the source file, symlink, or directory.
 
     dst : string
         Filename of the symlink.
+
+    uid : string, integer, or None
+        (optional: default = None)
+        Username (if a string) or UID (if an int) that should own the
+        dst object. If uid is None then the uid of dst is the default.
+        
+    gid : string, integer, or None
+        (optional: default = None)
+        Groupname or GID, as for uid.
+
+    return : boolean
+	Whether any change was made to dst.
+
+    e.g. Check that the link /var/spool/mail points to /net/maildir:
+    >>> check_link("/net/maildir", "/var/spool/mail")
+    """
+    change_made = False
+    try:
+        dst_exists = True;
+        try:
+            dst_stat = os.lstat(dst)
+            dst_mode = dst_stat.st_mode
+        except OSError, e:
+            if e.errno == errno.ENOENT:
+                dst_exists = False
+            else:
+                raise
+        need_link = True
+        if dst_exists:
+            if stat.S_ISLNK(dst_mode):
+                if os.readlink(dst) == src:
+                    need_link = False
+        if need_link:
+	    change_made = True
+            if dst_exists:
+                _remove(dst, backup)
+            log(LOG_ACTION, "Symlinking " + dst + " to " + src)
+            os.symlink(src, dst)
+        else:
+            log(LOG_NO_ACTION, dst + " is already symlinked to " + src)
+        change_made = _chkstat(dst, uid, gid, None) or change_made
+    except EnvironmentError, e:
+        if e.filename == None:
+            log(LOG_ERROR, "Error: " + e.strerror)
+        else:
+            log(LOG_ERROR, "Error: " + e.filename + ": " + e.strerror)
+    except PysysconfError, e:
+        log(LOG_ERROR, "Error: " + e.strerror)
+    return change_made
+
+def check_file_exists(dst, uid = None, gid = None, perm = None,
+                      backup = True):
+    """Check that the file named dst exists and has the specified
+    ownership and permissions. The path to dst must already exist.
+
+    dst : string
+        Filename that must exist.
 
     uid : string, integer, or None
         (optional: default = None)
@@ -223,78 +288,283 @@ def link(src, dst, uid = None, gid = None, perm = None):
         same value, such as 0644. If None, then the permissions
         of dst will be the default.
 
-    e.g. Link /var/spool/mail -> /net/maildir:
-    >>> link("/net/maildir", "/var/spool/mail")
+    backup : boolean
+	(optional: default = True)
+        Whether to backup dst if it will be replaced.
+
+    return : boolean
+	Whether any change was made to dst.
+
+    e.g. Check that /etc/nologin exists and is owned by root:
+    >>> check_file_exists("/etc/nologin", uid = "root")
     """
+    change_made = False
     try:
         dst_exists = True;
-        try:
+	try:
             dst_stat = os.lstat(dst)
-            dst_mode = dst_stat[stat.ST_MODE]
+            dst_mode = dst_stat.st_mode
         except OSError, e:
             if e.errno == errno.ENOENT:
                 dst_exists = False
             else:
                 raise
-        need_copy = True
+        need_create = True
         if dst_exists:
-            if stat.S_ISLNK(dst_mode):
-                if os.readlink(dst) == src:
-                    need_copy = False
-        if need_copy:
+            if stat.S_ISREG(dst_mode):
+		need_create = False
+        if need_create:
+	    change_made = True
             if dst_exists:
                 _remove(dst, backup)
-            log(LOG_ACTION, "Symlinking " + dst + " to " + src)
-            os.symlink(src, dst)
+            log(LOG_ACTION, "Creating file " + dst)
+            fd = os.open(dst, os.O_CREAT)
+	    os.close(fd)
         else:
-            log(LOG_NO_ACTION, dst + " is already symlinked to " + src)
-        _chkstat(dst, uid, gid, perm)
+            log(LOG_NO_ACTION, "File " + dst + " already exists")
+        change_made = _chkstat(dst, uid, gid, perm) or change_made
     except EnvironmentError, e:
         if e.filename == None:
             log(LOG_ERROR, "Error: " + e.strerror)
         else:
             log(LOG_ERROR, "Error: " + e.filename + ": " + e.strerror)
-    except PyConfError, e:
+    except PysysconfError, e:
         log(LOG_ERROR, "Error: " + e.strerror)
+    return change_made
 
-def remove(dst, pattern = None, recurse = 0, age = None):
-    """Checks that dst (or files in dst matching pat) does not exist.
+def check_dir_exists(dst, uid = None, gid = None, perm = None,
+                     backup = True):
+    """Check that the directory named dst exists and has the specified
+    ownership and permissions. The path to dst must already exist.
 
     dst : string
-        Filename or directory name to remove.
+        Directory that must exist.
 
-    pattern : string, or None
+    uid : string, integer, or None
         (optional: default = None)
-        If pattern is None, then dst itself is removed. Otherwise, dst
-        is not removed and only those files inside of dst (if it is a
-        directory) which match the regexp pattern are removed.
-
-    recurse : integer
-        (optional: default = 0)
-        Number of directory levels to recurse if pattern is not None
-        and dst is a directory. A value of 1 means to only delete
-        immediate children of dst, which higher values imply deeper
-        recursion. A value of 0 means no limit on depth.
-
-    age : datetime.timedelta objecct, or None
+        Username (if a string) or UID (if an int) that should own the
+        dst object. If uid is None then the uid of dst is the default.
+        
+    gid : string, integer, or None
         (optional: default = None)
-        Lower bound on the age of objects which will be removed, or no
-        bound if None.
+        Groupname or GID, as for uid.
 
-    e.g. Remove /etc/nologin:
-    >>> remove("/etc/nologin")
+    perm : string, integer, or None
+        (optional: default = None)
+        Permissions of dst. Can be a string containing an octal
+        number, such as "0644", or an integer containing the
+        same value, such as 0644. If None, then the permissions
+        of dst will be the default.
 
-    e.g. Remove the entire directory /etc/cups:
-    >>> remove("/etc/cups")
+    backup : boolean
+	(optional: default = True)
+        Whether to backup dst if it will be replaced.
 
-    e.g. Remove the contents of /var/mail, but do not delete the
-    directory /var/mail itself:
-    >>> remove("/var/mail", pattern = ".*")
+    return : boolean
+	Whether any change was made to dst.
 
-    e.g. Remove all backup files older than one week:
-    >>> remove("/backups", pattern = ".*", \\
-               age = datetime.timedelta(days = 7))
+    e.g. Check that the directory /var/pysysconf exists:
+    >>> check_dir_exists("/var/pysysconf")
     """
+    change_made = False
+    try:
+        dst_exists = True;
+	try:
+            dst_stat = os.lstat(dst)
+            dst_mode = dst_stat.st_mode
+        except OSError, e:
+            if e.errno == errno.ENOENT:
+                dst_exists = False
+            else:
+                raise
+        need_create = True
+        if dst_exists:
+            if stat.S_ISDIR(dst_mode):
+		need_create = False
+        if need_create:
+	    change_made = True
+            if dst_exists:
+                _remove(dst, backup)
+            log(LOG_ACTION, "Creating directory " + dst)
+	    os.mkdir(dst, 0700)
+        else:
+            log(LOG_NO_ACTION, "Directory " + dst + " already exists")
+        change_made = _chkstat(dst, uid, gid, perm) or change_made
+    except EnvironmentError, e:
+        if e.filename == None:
+            log(LOG_ERROR, "Error: " + e.strerror)
+        else:
+            log(LOG_ERROR, "Error: " + e.filename + ": " + e.strerror)
+    except PysysconfError, e:
+        log(LOG_ERROR, "Error: " + e.strerror)
+    return change_made
+
+def check_not_exists(dst, test = None, follow_links = False, backup = True):
+    """Delete dst, or files in dst that satisfy test.
+
+    dst : string
+        Directory name to remove files in.
+
+    test : remove_test object, or None
+	If None, remove dst. Otherwise, use this object to test
+	whether to remove a given file or directory.
+
+    follow_links : boolean
+	(optional: default = False)
+	Whether to follow links to files and directories. This can be
+	dangerous if a user has write access to any of the directories
+	being processed.
+
+    backup : boolean
+	(optional: default = True)
+	Whether to rename objects to <filename>.<isodate> rather than
+	deleting them.
+
+    return : boolean
+	Whether any change was made to dst.
+
+    e.g. Ensure /etc/nologin does not exist:
+    >>> check_not_exists("/etc/nologin")
+
+    e.g. Ensure the entire directory /etc/cups does not exist:
+    >>> check_not_exists("/etc/cups")
+
+    e.g. Ensure the contents of /var/mail do not exist, but the /var/mail
+	 dirctory itself may exist:
+    >>> check_not_exists("/var/mail", test = test_true())
+
+    e.g. Ensure all backup files older than one week do not exist:
+    >>> test_one_week = test_age(age = datetime.timedelta(days = 7))
+    >>> check_not_exists("/backups", test = test_one_week)
+    """
+    change_made = False
+    try:
+	if test == None:
+	    dst_exists = True;
+    	    try:
+        	dst_stat = os.lstat(dst)
+      	    except OSError, e:
+        	if e.errno == errno.ENOENT:
+            	    dst_exists = False
+       	    	else:
+            	    raise
+	    if dst_exists:
+		change_made = True
+		_remove(dst, backup)
+	else:
+	    change_made = _remove_by_test(dst, test, follow_links, backup)
+    except EnvironmentError, e:
+        if e.filename == None:
+            log(LOG_ERROR, "Error: " + e.strerror)
+        else:
+            log(LOG_ERROR, "Error: " + e.filename + ": " + e.strerror)
+    except PysysconfError, e:
+        log(LOG_ERROR, "Error: " + e.strerror)
+    return change_made
+
+#def check_not_exists(dst, pattern = None, recurse = None, age = None,
+#		    age_type = "mtime", size = 0, follow_links = False,
+#		    rm_dirs = False, rm_dir_links = False,
+#		    rm_bad_links = False, backup = True, backup_dir = None):
+#    """Check that dst (or files in dst matching pattern) does not exist.
+#
+#    dst : string
+#        Filename or directory name that should not exist.
+#
+#    pattern : regular expression object, or None
+#        (optional: default = None)
+#        If pattern is None, then dst itself is removed. Otherwise, if
+#	dst is a directory then only those files inside of dst which
+#	match the regexp (using the search method) are removed.
+#
+#    age : datetime.timedelta object, or None
+#        (optional: default = None)
+#        Lower bound on the age of objects which will be removed, or no
+#        bound if None. This is ANDed with the size restriction.
+#
+#    age_type : string
+#	(optional: default = "mtime")
+#	Which time to use for the age test. Must be "mtime", "ctime",
+#	or "atime".
+#
+#    size : integer or None
+#	(optional: default = 0)
+#	Minimum size of objects which will be removed, if an integer.
+#	If None, then only zero-length files will be removed. This is
+#	ANDed with the age restriction.
+#
+#    follow_links : boolean
+#	(optional: default = False)
+#	Whether to follow links to files and directories. This can be
+#	dangerous if a user has write access to any of the directories
+#	being processed.
+#
+#    rm_dirs : boolean
+#	(optional: default = False)
+#	Whether to delete empty subdirectories of dst when doing a
+#	recursive deletion.
+#
+#    rm_dir_links : boolean
+#	(optional: default = False)
+#	Whether to delete links under dst to empty directories when
+#	doing a recursive deletion.
+#
+#    rm_bad_links : boolean
+#	(optional: default = False)
+#	Whether to delete links which point to non-existant targets
+#	when doing a recursive deletion.
+#
+#    backup : boolean
+#	(optional: default = True)
+#	Whether to rename objects to <filename>.<isodate> rather than
+#	deleting them.
+#
+#    backup_dir : string or None
+#	(optional: default = None)
+#	If a string, the name of a directory to backup deleted files to.
+#	If None, then files are renamed in their current directories.
+#
+#    return : boolean
+#	Whether any change was made to dst.
+#
+#    e.g. Ensure /etc/nologin does not exist:
+#    >>> check_not_exists("/etc/nologin")
+#
+#    e.g. Ensure the entire directory /etc/cups does not exist:
+#    >>> check_not_exists("/etc/cups")
+#
+#    e.g. Ensure the contents of /var/mail do not exist, but the /var/mail
+#	 dirctory itself may exist:
+#    >>> check_not_exists("/var/mail", pattern = ".*")
+#
+#    e.g. Ensure all backup files older than one week do not exist:
+#    >>> check_not_exists("/backups", pattern = ".*",
+#                        age = datetime.timedelta(days = 7))
+#    """
+#    change_made = False
+#    try:
+#	if not pattern:
+#	    dst_exists = True;
+#    	    try:
+#        	dst_stat = os.lstat(dst)
+#      	    except OSError, e:
+#        	if e.errno == errno.ENOENT:
+#            	    dst_exists = False
+#       	    	else:
+#            	    raise
+#	    if dst_exists:
+#		change_made = True
+#		_remove_by_age_and_size(dst, age, age_type, backup, backup_dir)
+#	else:
+#	    change_made = _remove_by_pattern(dst, pattern, age, age_type, backup)
+#    except EnvironmentError, e:
+#        if e.filename == None:
+#            log(LOG_ERROR, "Error: " + e.strerror)
+#        else:
+#            log(LOG_ERROR, "Error: " + e.filename + ": " + e.strerror)
+#    except PysysconfError, e:
+#        log(LOG_ERROR, "Error: " + e.strerror)
+#    return change_made
 
 def shell_command(command):
     """Run an external command in a shell.
@@ -311,7 +581,7 @@ def shell_command(command):
     log(LOG_ACTION, "Running \"" + command + "\"")
     return os.system(command)
 
-def enable_service(service_name):
+def check_service_enabled(service_name):
     """Ensure that the given service is currently running and
     will start on boot.
 
@@ -319,7 +589,7 @@ def enable_service(service_name):
         Name of service to enable.
 
     e.g. Make sure slapd is running:
-    >>> enable_service("ldap")
+    >>> check_service_enabled("ldap")
     """
     if shell_command("/sbin/service " + service_name + " status > /dev/null"):
         log(LOG_ACTION, "Starting " + service_name);
@@ -333,7 +603,7 @@ def enable_service(service_name):
     else:
         log(LOG_NO_ACTION, service_name + " is already on")
 
-def disable_service(service_name):
+def check_service_disabled(service_name):
     """Ensure that the given service is currently not running and
     will not start on boot.
 
@@ -341,7 +611,7 @@ def disable_service(service_name):
         Name of service to disable.
 
     e.g. Make sure apache is not running:
-    >>> disable_service("httpd")
+    >>> check_service_disabled("httpd")
     """
     if not shell_command("/sbin/service " + service_name + " status"
                          + " > /dev/null"):
@@ -356,14 +626,14 @@ def disable_service(service_name):
     else:
         log(LOG_NO_ACTION, service_name + " is already off")
 
-def install_rpm(rpm_name):
+def check_rpm_installed(rpm_name):
     """Ensure that the given rpm is installed, using yum for installation.
 
     rpm_name : string
         Name of rpm to install.
 
     e.g. make sure the latest version of matlab is installed:
-    >>> install_rpm(matlab)
+    >>> check_rpm_installed("matlab")
     """
     if shell_command("/bin/rpm -q " + rpm_name + " > /dev/null"):
         log(LOG_ACTION, "Installing " + rpm_name)
@@ -400,7 +670,7 @@ def _copy_file(src, dst, backup, log_no_action = True):
     dst_exists = True;
     try:
         dst_stat = os.lstat(dst)
-        dst_mode = dst_stat[stat.ST_MODE]
+        dst_mode = dst_stat.st_mode
     except OSError, e:
         if e.errno == errno.ENOENT:
             dst_exists = False
@@ -409,12 +679,12 @@ def _copy_file(src, dst, backup, log_no_action = True):
     need_copy = True
     if dst_exists:
         if stat.S_ISREG(dst_mode):
-            srcstat = os.lstat(src)
-            srcmode = srcstat[stat.ST_MODE]
-            if not stat.S_ISREG(srcmode):
+            src_stat = os.lstat(src)
+            src_mode = src_stat.st_mode
+            if not stat.S_ISREG(src_mode):
                 raise PyError("src " + src + " as we were watching " \
                               "(expected a regular file)")
-            if dst_stat[stat.ST_SIZE] == srcstat[stat.ST_SIZE]:
+            if dst_stat.st_size == src_stat.st_size:
                 if _md5sum(dst) == _md5sum(src):
                     need_copy = False
     if need_copy:
@@ -454,15 +724,15 @@ def _copy_link(src, dst, backup, log_no_action = True):
     dst_exists = True;
     try:
         dst_stat = os.lstat(dst)
-        dst_mode = dst_stat[stat.ST_MODE]
+        dst_mode = dst_stat.st_mode
     except OSError, e:
         if e.errno == errno.ENOENT:
             dst_exists = False
         else:
             raise
-    srcstat = os.lstat(src)
-    srcmode = srcstat[stat.ST_MODE]
-    if not stat.S_ISLNK(srcmode):
+    src_stat = os.lstat(src)
+    src_mode = src_stat.st_mode
+    if not stat.S_ISLNK(src_mode):
         raise PyError("src " + src + " as we were watching " \
                       "(expected a symlink)")
     srclink = os.readlink(src)
@@ -531,7 +801,7 @@ def _copy_dir(src, dst, uid, gid, perm,
         log_no_action is True).
     """
     src_stat = os.lstat(src)
-    src_mode = src_stat[stat.ST_MODE]
+    src_mode = src_stat.st_mode
     if not stat.S_ISDIR(src_mode):
         raise PyError("src " + src + " changed as we were " \
                       "watching (expected a directory)")
@@ -539,7 +809,7 @@ def _copy_dir(src, dst, uid, gid, perm,
     dst_exists = True;
     try:
         dst_stat = os.lstat(dst)
-        dst_mode = dst_stat[stat.ST_MODE]
+        dst_mode = dst_stat.st_mode
     except OSError, e:
         if e.errno == errno.ENOENT:
             dst_exists = False
@@ -586,7 +856,7 @@ def _copy_dir(src, dst, uid, gid, perm,
             src_file = os.path.join(src, src_entry)
             dst_file = os.path.join(dst, src_entry)
             src_entry_stat = os.lstat(src_file)
-            src_entry_mode = src_entry_stat[stat.ST_MODE]
+            src_entry_mode = src_entry_stat.st_mode
             if stat.S_ISREG(src_entry_mode):
                 if _copy_file(src_file, dst_file, backup,
                               log_no_action = False):
@@ -601,7 +871,7 @@ def _copy_dir(src, dst, uid, gid, perm,
                              log_no_action = False):
                     did_copy = True
             else:
-                raise PyConfError("src " + src + " is not" \
+                raise PysysconfError("src " + src + " is not" \
                                   " a regular file, a symlink," \
                                   " or a directory")
             if _chkstatsrc(src_file, dst_file,
@@ -626,7 +896,7 @@ def _rm_tree(dst):
         Name of directory to delete. Must currently exist.
     """
     dst_stat = os.lstat(dst)
-    dst_mode = dst_stat[stat.ST_MODE]
+    dst_mode = dst_stat.st_mode
     if stat.S_ISDIR(dst_mode):
         dst_list = os.listdir(dst)
         for f in dst_list:
@@ -649,7 +919,7 @@ def _remove(dst, backup):
         or to simply delete dst (if backup is False).
     """
     dst_stat = os.lstat(dst)
-    dst_mode = dst_stat[stat.ST_MODE]
+    dst_mode = dst_stat.st_mode
     if backup:
         d = datetime.datetime.today()
         newname = dst + "." + d.isoformat()
@@ -732,9 +1002,9 @@ def _chkstat(dst, uid = None, gid = None, perm = None):
         False.
     """
     dst_stat = os.lstat(dst)
-    dst_mode = dst_stat[stat.ST_MODE]
-    dst_uid = dst_stat[stat.ST_UID]
-    dst_gid = dst_stat[stat.ST_GID]
+    dst_mode = dst_stat.st_mode
+    dst_uid = dst_stat.st_uid
+    dst_gid = dst_stat.st_gid
     dst_perm = stat.S_IMODE(dst_mode)
     need_chown = False
     did_action = False
@@ -742,7 +1012,7 @@ def _chkstat(dst, uid = None, gid = None, perm = None):
         if type(uid) is types.StringType:
             uid = pwd.getpwnam(uid)[0]
         if not(type(uid) is types.IntType):
-            raise PyConfError("Bad uid specificiation: " + str(uid))
+            raise PysysconfError("Bad uid specificiation: " + str(uid))
         if uid != dst_uid:
             need_chown = True
     else:
@@ -751,7 +1021,7 @@ def _chkstat(dst, uid = None, gid = None, perm = None):
         if type(gid) is types.StringType:
             gid = grp.getgrnam(gid)[0]
         if not(type(gid) is types.IntType):
-            raise PyConfError("Bad gid specificiation: " + str(uid))
+            raise PysysconfError("Bad gid specificiation: " + str(uid))
         if gid != dst_gid:
             need_chown = True
     else:
@@ -765,9 +1035,10 @@ def _chkstat(dst, uid = None, gid = None, perm = None):
         if type(perm) is types.StringType:
             perm = int(perm, 8)
         if not(type(perm) is types.IntType):
-            raise PyConfError("Bad perm specificiation: " + str(perm))
+            raise PysysconfError("Bad perm specificiation: " + str(perm))
         if dst_perm != perm:
-            log(LOG_ACTION, "Changing permissions of " + dst + " to " + "%o" % perm)
+            log(LOG_ACTION, "Changing permissions of %s from %o to %o" \
+				% (dst, dst_perm, perm))
             os.chmod(dst, perm)
             did_action = True
     return did_action
@@ -812,24 +1083,244 @@ def _chkstatsrc(src, dst, uid = None, gid = None,
         Mask for permissions of dst for the case that src is a
         directory, as for umask.
     """
-    srcstat = os.lstat(src)
-    srcmode = srcstat[stat.ST_MODE]
-    srcuid = srcstat[stat.ST_UID]
-    srcgid = srcstat[stat.ST_GID]
-    srcperm = stat.S_IMODE(srcmode)
+    src_stat = os.lstat(src)
+    src_mode = src_stat.st_mode
+    src_uid = src_stat.st_uid
+    src_gid = src_stat.st_gid
+    src_perm = stat.S_IMODE(src_mode)
     if uid == None:
-        uid = srcuid
+        uid = src_uid
     if gid == None:
-        gid = srcgid
+        gid = src_gid
     if perm == None:
-        if stat.S_ISDIR(srcmode):
+        if stat.S_ISDIR(src_mode):
             if dmask == None:
-                perm = srcperm
+                perm = src_perm
             else:
-                perm = srcperm & dmask
+                perm = src_perm & dmask
         else:
             if umask == None:
-                perm = srcperm
+                perm = src_perm
             else:
-                perm = srcperm & umask
+                perm = src_perm & umask
     return _chkstat(dst, uid, gid, perm)
+
+#def _remove_by_age(dst, age = None, age_type = "mtime", backup = True):
+#    """Remove dst if it satisfies the age criteria.
+#
+#    dst : string
+#	Filename of the object to remove, which must exist.
+#
+#    age : timedelta or None
+#	(optional: default = None)
+#	Timedelta defining the minimum age of objects to keep. That is,
+#	if dst is older than age then it will be deleted.
+#
+#    age_type : string
+#	(optional: default = "mtime")
+#	Which time to use for the age test. Must be "mtime", "ctime",
+#	or "atime".
+#
+#    backup : boolean
+#	(optional: default = True)
+#	Whether to rename files to <filename>.<isodate> rather than
+#	deleting them.
+#
+#    return : boolean
+#	Whether any change was made to dst.
+#    """
+#    change_made = False
+#    dst_stat = os.lstat(dst)
+#    dst_mode = dst_stat.st_mode
+#    if age_type == "mtime":
+#	dst_time = dst_stat.st_mtime
+#    elif age_type == "atime":
+#	dst_time = dst_stat.st_atime
+#    elif age_type == "ctime":
+#	dst_time = dst_stat.st_ctime
+#    else:
+#        raise PysysconfError("Unknown age_type " + str(age_type))
+#    dst_datetime = datetime.datetime.fromtimestamp(dst_age)
+#    now_datetime = datetime.datetime.now()
+#    dst_age = now_datetime - dst_datetime
+#    if age == None or age < dst_age:
+#	change_made = True
+#	_remove(dst, backup)
+#    return change_made
+#
+#def _remove_by_pattern(dst, pattern, recurse = None, age = None,
+#		    age_type = "mtime", size = 0, follow_links = False,
+#		    rm_dirs = False, rm_dir_links = False,
+#		    rm_bad_links = False, backup = True, backup_dir = None):
+#    """Delete files in dst that match pattern.
+#
+#    dst : string
+#        Directory name to remove files in.
+#
+#    pattern : regular expression object
+#	Regexp that specifies which objects are removed. This is
+#	ANDed with the age and size restrictions.
+#
+#    age : datetime.timedelta object, or None
+#        (optional: default = None)
+#        Lower bound on the age of objects which will be removed, or no
+#        bound if None. This is ANDed with the size and pattern
+#	restrictions.
+#
+#    age_type : string
+#	(optional: default = "mtime")
+#	Which time to use for the age test. Must be "mtime", "ctime",
+#	or "atime".
+#
+#    size : integer or None
+#	(optional: default = 0)
+#	Minimum size of objects which will be removed, if an integer.
+#	If None, then only zero-length files will be removed. This is
+#	ANDed with the age and pattern restrictions.
+#
+#    follow_links : boolean
+#	(optional: default = False)
+#	Whether to follow links to files and directories. This can be
+#	dangerous if a user has write access to any of the directories
+#	being processed.
+#
+#    rm_dirs : boolean
+#	(optional: default = False)
+#	Whether to delete empty subdirectories of dst when doing a
+#	recursive deletion.
+#
+#    rm_dir_links : boolean
+#	(optional: default = False)
+#	Whether to delete links under dst to empty directories when
+#	doing a recursive deletion.
+#
+#    rm_bad_links : boolean
+#	(optional: default = False)
+#	Whether to delete links which point to non-existant targets
+#	when doing a recursive deletion.
+#
+#    backup : boolean
+#	(optional: default = True)
+#	Whether to rename objects to <filename>.<isodate> rather than
+#	deleting them.
+#
+#    backup_dir : string or None
+#	(optional: default = None)
+#	If a string, the name of a directory to backup deleted files to.
+#	If None, then files are renamed in their current directories.
+#
+#    return : boolean
+#	Whether any change was made to dst.
+#    """
+#    dst_stat = os.lstat(dst)
+#    dst_mode = dst_stat.st_mode
+#    if not stat.S_ISDIR(dst_mode):
+#	raise PysysconfException("A pattern was specified for deleting in " \
+#				 + dst + ", but it is not a directory")
+#    dst_list = os.listdir(dst)
+#    change_made = False
+#    for f in dst_list:
+#        f_name = os.path.join(dst, f)
+#	f_stat = os.lstat(f_name)
+#	f_mode = f_stat.st_mode
+#	if stat.S_ISDIR(f_mode):
+#	    change_made = _remove_by_pattern(f_name, pattern, age,
+#					     age_type, backup) \
+#			  or change_made
+#	elif pattern.search(f_name):
+#	    change_made = _remove_by_age(dst, age, age_type, backup) \
+#			  or change_made
+#    return change_made
+
+def _remove_by_test(dst, test, follow_links = False, backup = True):
+    """Delete files in dst that satisfy test.
+
+    dst : string
+        Directory name to remove files in.
+
+    test : remove_test object
+	Whether to remove a given file or directory.
+
+    follow_links : boolean
+	(optional: default = False)
+	Whether to follow links to files and directories. This can be
+	dangerous if a user has write access to any of the directories
+	being processed.
+
+    backup : boolean
+	(optional: default = True)
+	Whether to rename objects to <filename>.<isodate> rather than
+	deleting them.
+
+    return : boolean
+	Whether any change was made to dst.
+    """
+    dst_stat = os.lstat(dst)
+    dst_mode = dst_stat.st_mode
+    if not stat.S_ISDIR(dst_mode):
+	raise PysysconfException("A test was specified for deleting in " \
+				 + dst + ", but it is not a directory")
+    dst_list = os.listdir(dst)
+    change_made = False
+    for f in dst_list:
+        f_name = os.path.join(dst, f)
+	if follow_links:
+	    f_stat = os.stat(f_name)
+	else:
+	    f_stat = os.lstat(f_name)
+	f_mode = f_stat.st_mode
+	if test.test(f_name, f_stat):
+	    _remove(f_name, backup)
+	else:
+	    if stat.S_ISDIR(f_mode):
+	    	change_made = _remove_by_test(f_name, test, follow_links,
+					      backup) \
+			      or change_made
+    return change_made
+
+class remove_test:
+    """Class that implements a test for whether a given file or
+    directory should be removed.
+    """
+    def test(self, file_name, file_stat):
+	return False
+
+class test_true(remove_test):
+    """Return True unconditionally.
+    """
+    def test(self, file_name, file_stat):
+	return True
+
+class test_false(remove_test):
+    """Return False unconditionally.
+    """
+    def test(self, file_name, file_stat):
+	return False
+
+class test_age(remove_test):
+    """Tests whether a file is older than a given age.
+    """
+    age = None
+    age_type = "mtime"
+
+    def __init__(self, age = None, age_type = "mtime"):
+	self.age = age
+	self.age_type = age_type
+
+    def test(self, file_name, file_stat):
+   	file_mode = file_stat.st_mode
+    	if self.age_type == "mtime":
+	    file_time = file_stat.st_mtime
+    	elif self.age_type == "atime":
+	    file_time = file_stat.st_atime
+    	elif self.age_type == "ctime":
+	    file_time = file_stat.st_ctime
+    	else:
+            raise PysysconfError("Unknown age_type " + str(self.age_type))
+        file_datetime = datetime.datetime.fromtimestamp(file_time)
+    	now_datetime = datetime.datetime.now()
+    	file_age = now_datetime - file_datetime
+    	if self.age == None or self.age < file_age:
+	    return True
+	else:
+	    return False
