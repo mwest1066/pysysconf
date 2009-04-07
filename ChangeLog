@@ -1,5 +1,12 @@
 
-0.2.6
+0.2.7
+
+	- Log when removing files with check_not_exists()
+
+	- Fixed bug where check_link() would fail if the destination
+	  already existed, due to the variable "backup" being undefined.
+
+0.2.6 2005-11-05
 
 	- Added a test_regexp class to enable check_not_exists by
 	  filename regexp match.
