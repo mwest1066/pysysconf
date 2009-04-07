@@ -1,5 +1,5 @@
 # PySysConf - library to aid in system configuration.
-# Copyright (C) 2004,2005 Matthew West
+# Copyright (C) 2004-2009 Matthew West
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-"""Cfengine-style commands for system configuration.
+"""Useful commands for system configuration.
 
 PySysConf provides a number of useful high-level functions for doing
 system configuration. These are modeled on the commands in cfengine.
@@ -42,6 +42,13 @@ exceptions fall through.
 ##############################################################################
 # imports
 import sys, socket, os, md5, datetime, stat, errno, pwd, grp, types, syslog
+
+_HAVE_SELINUX_MODULE = False
+try:
+    import selinux
+    _HAVE_SELINUX_MODULE = True
+except ImportError:
+    pass
 
 ##############################################################################
 # logging
@@ -149,8 +156,9 @@ def release_lock(lock_name):
     log(LOG_ACTION, "Released lock " + lock_name)
 
 def check_copy(src, dst, uid = None, gid = None,
-         perm = None, umask = None, dmask = None, backup = True,
-         purge = False):
+               perm = None, umask = None, dmask = None, se_context = None,
+               se_user = None, se_role = None, se_type = None,
+               se_level = None, backup = True, purge = False):
     """Check the copy of a file, symlink, or directory.
 
     src : string
@@ -191,6 +199,42 @@ def check_copy(src, dst, uid = None, gid = None,
         Mask for permissions of dst for the case that dst is a
         directory, as for umask.
 
+    se_context : string or None
+        (optional: default = None)
+        SELinux context given as a string "user:role:type:level". If
+        se_context is not None then all of se_user, se_role, se_type,
+        and se_level must be None. If se_context is None then the
+        context of dst is not changed (except possibly by se_user,
+        se_role, se_type, or se_level).
+
+    se_user : string or None
+        (optional: default = None)
+        SELinux context user as a string. Cannot be specified
+        simultaneously with se_context. If None, then the user
+        component of the context of dst is not changed (except
+        possibly by se_context).
+
+    se_role : string or None
+        (optional: default = None)
+        SELinux context role as a string. Cannot be specified
+        simultaneously with se_context. If None, then the role
+        component of the context of dst is not changed (except
+        possibly by se_context).
+
+    se_type : string or None
+        (optional: default = None)
+        SELinux context type as a string. Cannot be specified
+        simultaneously with se_context. If None, then the type
+        component of the context of dst is not changed (except
+        possibly by se_context).
+
+    se_level : string or None
+        (optional: default = None)
+        SELinux context level as a string. Cannot be specified
+        simultaneously with se_context. If None, then the level
+        component of the context of dst is not changed (except
+        possibly by se_context).
+
     backup : boolean
         (optional: default = True)
         Whether to backup dst if it will be overwritten.
@@ -219,12 +263,14 @@ def check_copy(src, dst, uid = None, gid = None,
             change_made = _copy_file(src, dst, backup)
         elif stat.S_ISDIR(src_mode):
             change_made = _copy_dir(src, dst, uid, gid, perm,
-                                    umask, dmask, backup, purge)
+                                    umask, dmask, se_context, se_user,
+                                    se_role, se_type, se_level, backup, purge)
         else:
             raise PysysconfError("src " + src + " is not" \
                               " a regular file, a symlink," \
                               " or a directory")
-        change_made = _chkstatsrc(src, dst, uid, gid, perm, umask, dmask) \
+        change_made = _chkstatsrc(src, dst, uid, gid, perm, umask, dmask,
+                                  se_context, se_user, se_role, se_type, se_level) \
 			or change_made
     except EnvironmentError, e:
         if e.filename == None:
@@ -235,7 +281,9 @@ def check_copy(src, dst, uid = None, gid = None,
         log(LOG_ERROR, "Error: " + str(e))
     return change_made
 
-def check_link(src, dst, uid = None, gid = None, backup = True):
+def check_link(src, dst, uid = None, gid = None, se_context = None,
+               se_user = None, se_role = None, se_type = None,
+               se_level = None, backup = True):
     """Check that dst is a symlink to src.
 
     src : string
@@ -252,6 +300,42 @@ def check_link(src, dst, uid = None, gid = None, backup = True):
     gid : string, integer, or None
         (optional: default = None)
         Groupname or GID, as for uid.
+
+    se_context : string or None
+        (optional: default = None)
+        SELinux context given as a string "user:role:type:level". If
+        se_context is not None then all of se_user, se_role, se_type,
+        and se_level must be None. If se_context is None then the
+        context of dst is not changed (except possibly by se_user,
+        se_role, se_type, or se_level).
+
+    se_user : string or None
+        (optional: default = None)
+        SELinux context user as a string. Cannot be specified
+        simultaneously with se_context. If None, then the user
+        component of the context of dst is not changed (except
+        possibly by se_context).
+
+    se_role : string or None
+        (optional: default = None)
+        SELinux context role as a string. Cannot be specified
+        simultaneously with se_context. If None, then the role
+        component of the context of dst is not changed (except
+        possibly by se_context).
+
+    se_type : string or None
+        (optional: default = None)
+        SELinux context type as a string. Cannot be specified
+        simultaneously with se_context. If None, then the type
+        component of the context of dst is not changed (except
+        possibly by se_context).
+
+    se_level : string or None
+        (optional: default = None)
+        SELinux context level as a string. Cannot be specified
+        simultaneously with se_context. If None, then the level
+        component of the context of dst is not changed (except
+        possibly by se_context).
 
     backup : boolean
         (optional: default = True)
@@ -287,7 +371,9 @@ def check_link(src, dst, uid = None, gid = None, backup = True):
             os.symlink(src, dst)
         else:
             log(LOG_NO_ACTION, dst + " is already symlinked to " + src)
-        change_made = _chkstat(dst, uid, gid, None) or change_made
+        change_made = _chkstat(dst, uid, gid, None, se_context,
+                               se_user, se_role, se_type, se_level) \
+                         or change_made
     except EnvironmentError, e:
         if e.filename == None:
             log(LOG_ERROR, "Error: " + str(e))
@@ -298,7 +384,8 @@ def check_link(src, dst, uid = None, gid = None, backup = True):
     return change_made
 
 def check_file_exists(dst, uid = None, gid = None, perm = None,
-                      backup = True):
+                      se_context = None, se_user = None, se_role = None,
+                      se_type = None, se_level = None, backup = True):
     """Check that the file named dst exists and has the specified
     ownership and permissions. The path to dst must already exist.
 
@@ -320,6 +407,42 @@ def check_file_exists(dst, uid = None, gid = None, perm = None,
         number, such as "0644", or an integer containing the
         same value, such as 0644. If None, then the permissions
         of dst will be the default.
+
+    se_context : string or None
+        (optional: default = None)
+        SELinux context given as a string "user:role:type:level". If
+        se_context is not None then all of se_user, se_role, se_type,
+        and se_level must be None. If se_context is None then the
+        context of dst is not changed (except possibly by se_user,
+        se_role, se_type, or se_level).
+
+    se_user : string or None
+        (optional: default = None)
+        SELinux context user as a string. Cannot be specified
+        simultaneously with se_context. If None, then the user
+        component of the context of dst is not changed (except
+        possibly by se_context).
+
+    se_role : string or None
+        (optional: default = None)
+        SELinux context role as a string. Cannot be specified
+        simultaneously with se_context. If None, then the role
+        component of the context of dst is not changed (except
+        possibly by se_context).
+
+    se_type : string or None
+        (optional: default = None)
+        SELinux context type as a string. Cannot be specified
+        simultaneously with se_context. If None, then the type
+        component of the context of dst is not changed (except
+        possibly by se_context).
+
+    se_level : string or None
+        (optional: default = None)
+        SELinux context level as a string. Cannot be specified
+        simultaneously with se_context. If None, then the level
+        component of the context of dst is not changed (except
+        possibly by se_context).
 
     backup : boolean
 	(optional: default = True)
@@ -355,7 +478,9 @@ def check_file_exists(dst, uid = None, gid = None, perm = None,
 	    os.close(fd)
         else:
             log(LOG_NO_ACTION, "File " + dst + " already exists")
-        change_made = _chkstat(dst, uid, gid, perm) or change_made
+        change_made = _chkstat(dst, uid, gid, perm, se_context,
+                               se_user, se_role, se_type, se_level) \
+                         or change_made
     except EnvironmentError, e:
         if e.filename == None:
             log(LOG_ERROR, "Error: " + str(e))
@@ -366,7 +491,8 @@ def check_file_exists(dst, uid = None, gid = None, perm = None,
     return change_made
 
 def check_dir_exists(dst, uid = None, gid = None, perm = None,
-                     backup = True):
+                     se_context = None, se_user = None, se_role = None,
+                     se_type = None, se_level = None, backup = True):
     """Check that the directory named dst exists and has the specified
     ownership and permissions. The path to dst must already exist.
 
@@ -388,6 +514,42 @@ def check_dir_exists(dst, uid = None, gid = None, perm = None,
         number, such as "0644", or an integer containing the
         same value, such as 0644. If None, then the permissions
         of dst will be the default.
+
+    se_context : string or None
+        (optional: default = None)
+        SELinux context given as a string "user:role:type:level". If
+        se_context is not None then all of se_user, se_role, se_type,
+        and se_level must be None. If se_context is None then the
+        context of dst is not changed (except possibly by se_user,
+        se_role, se_type, or se_level).
+
+    se_user : string or None
+        (optional: default = None)
+        SELinux context user as a string. Cannot be specified
+        simultaneously with se_context. If None, then the user
+        component of the context of dst is not changed (except
+        possibly by se_context).
+
+    se_role : string or None
+        (optional: default = None)
+        SELinux context role as a string. Cannot be specified
+        simultaneously with se_context. If None, then the role
+        component of the context of dst is not changed (except
+        possibly by se_context).
+
+    se_type : string or None
+        (optional: default = None)
+        SELinux context type as a string. Cannot be specified
+        simultaneously with se_context. If None, then the type
+        component of the context of dst is not changed (except
+        possibly by se_context).
+
+    se_level : string or None
+        (optional: default = None)
+        SELinux context level as a string. Cannot be specified
+        simultaneously with se_context. If None, then the level
+        component of the context of dst is not changed (except
+        possibly by se_context).
 
     backup : boolean
 	(optional: default = True)
@@ -422,7 +584,9 @@ def check_dir_exists(dst, uid = None, gid = None, perm = None,
 	    os.mkdir(dst, 0700)
         else:
             log(LOG_NO_ACTION, "Directory " + dst + " already exists")
-        change_made = _chkstat(dst, uid, gid, perm) or change_made
+        change_made = _chkstat(dst, uid, gid, perm, se_context,
+                               se_user, se_role, se_type, se_level) \
+                         or change_made
     except EnvironmentError, e:
         if e.filename == None:
             log(LOG_ERROR, "Error: " + str(e))
@@ -621,6 +785,40 @@ def check_rpm_installed(rpm_name):
         shell_command("/usr/bin/yum -e 0 -d 0 -y install " + rpm_name)
     else:
         log(LOG_NO_ACTION, rpm_name + " is already installed")
+
+def check_selinux_bool(bool_name, bool_value):
+    """Ensure that the given SELinux boolean has the given value.
+
+    bool_name : string
+        Name of the boolean to check.
+
+    bool_value: boolean
+        Value that the boolean must have.
+
+    return : boolean
+	Whether any change was made to the boolean status.
+
+    e.g. make sure the webserver can access user home directories:
+    >>> check_sebool("httpd_enable_homedirs", True)
+    """
+    change_made = False
+    if bool_value == True:
+        if shell_command("/usr/sbin/getsebool %s | grep -q \"%s --> on\""
+                         % (bool_name, bool_name)):
+            change_made = True
+            log(LOG_ACTION, "Setting SELinux boolean %s to on" % bool_name)
+            shell_command("/usr/sbin/setsebool -P %s 1" % bool_name)
+        else:
+            log(LOG_NO_ACTION, "SELinux boolean %s already set to on" % bool_name)
+    else:
+        if shell_command("/usr/sbin/getsebool %s | grep -q \"%s --> off\""
+                         % (bool_name, bool_name)):
+            change_made = True
+            log(LOG_ACTION, "Setting SELinux boolean %s to off" % bool_name)
+            shell_command("/usr/sbin/setsebool -P %s 0" % bool_name)
+        else:
+            log(LOG_NO_ACTION, "SELinux boolean %s already set to off" % bool_name)
+    return change_made
             
 ##############################################################################
 # private functions
@@ -732,8 +930,9 @@ def _copy_link(src, dst, backup, log_no_action = True):
             log(LOG_NO_ACTION, dst + " is already the same as " + src)
     return need_copy
 
-def _copy_dir(src, dst, uid, gid, perm,
-              umask, dmask, backup, purge, log_no_action = True):
+def _copy_dir(src, dst, uid, gid, perm, umask, dmask, se_context,
+              se_user, se_role, se_type, se_level, backup, purge,
+              log_no_action = True):
     """Copy a directory and all its contents.
 
     src : string
@@ -769,6 +968,37 @@ def _copy_dir(src, dst, uid, gid, perm,
         Mask for permissions of dst for the case that dst is a
         directory, as for umask.
 
+    se_context : string or None
+        SELinux context given as a string "user:role:type:level". If
+        se_context is not None then all of se_user, se_role, se_type,
+        and se_level must be None. If se_context is None then the
+        context of dst is not changed (except possibly by se_user,
+        se_role, se_type, or se_level).
+
+    se_user : string or None
+        SELinux context user as a string. Cannot be specified
+        simultaneously with se_context. If None, then the user
+        component of the context of dst is not changed (except
+        possibly by se_context).
+
+    se_role : string or None
+        SELinux context role as a string. Cannot be specified
+        simultaneously with se_context. If None, then the role
+        component of the context of dst is not changed (except
+        possibly by se_context).
+
+    se_type : string or None
+        SELinux context type as a string. Cannot be specified
+        simultaneously with se_context. If None, then the type
+        component of the context of dst is not changed (except
+        possibly by se_context).
+
+    se_level : string or None
+        SELinux context level as a string. Cannot be specified
+        simultaneously with se_context. If None, then the level
+        component of the context of dst is not changed (except
+        possibly by se_context).
+
     backup : boolean
         Whether to backup dst if it will be overwritten.
 
@@ -802,8 +1032,10 @@ def _copy_dir(src, dst, uid, gid, perm,
     if not dst_exists:
         log(LOG_ACTION, "Copying " + src + " to " + dst)
         os.mkdir(dst)
-        _chkstatsrc(src, dst, uid, gid, \
-                                perm, umask, dmask)
+    if _chkstatsrc(src, dst, uid, gid, perm,
+                   umask, dmask, se_context,
+                   se_user, se_role, se_type, se_level):
+        did_copy = True
     dst_dir = os.listdir(dst)
     dst_dir.sort()
     src_dir.sort()
@@ -848,16 +1080,17 @@ def _copy_dir(src, dst, uid, gid, perm,
                     did_copy = True
             elif stat.S_ISDIR(src_entry_mode):
                 if _copy_dir(src_file, dst_file, uid, gid,
-                             perm, umask, dmask, backup, purge,
+                             perm, umask, dmask, se_context,
+                             se_user, se_role, se_type,
+                             se_level, backup, purge,
                              log_no_action = False):
                     did_copy = True
             else:
                 raise PysysconfError("src " + src + " is not" \
                                   " a regular file, a symlink," \
                                   " or a directory")
-            if _chkstatsrc(src_file, dst_file,
-                                       uid, gid,
-                                       perm, umask, dmask):
+            if _chkstatsrc(src, dst, uid, gid, perm, umask, dmask,
+                           se_context, se_user, se_role, se_type, se_level):
                 did_copy = True
         else:
             if purge:
@@ -955,38 +1188,83 @@ def _md5sum(filename):
     f.close()
     return m.digest()
 
-def _chkstat(dst, uid = None, gid = None, perm = None):
+def _chkstat(dst, uid, gid, perm, se_context,
+             se_user, se_role, se_type, se_level):
     """Check the uid, gid, and permissions of dst.
 
     dst : string
         Filename of object to check.
 
     uid : string, integer, or None
-        (optional: default = None)
         Username (if a string) or UID (if an int) that should
         own the dst object. If None, then the uid of dst is
         not changed.
 
     gid : string, integer, or None
-        (optional: default = None)
         Groupname, GID, or None, as for uid.
 
     perm : string, integer, or None
-        (optional: default = None)
         Permissions of dst. Can be a string containing an octal
         number, such as "0644", or an integer containing the
         same value, such as 0644. If None, then the permissions
         of dst are not changed.
 
+    se_context : string or None
+        SELinux context given as a string "user:role:type:level". If
+        se_context is not None then all of se_user, se_role, se_type,
+        and se_level must be None. If se_context is None then the
+        context of dst is not changed (except possibly by se_user,
+        se_role, se_type, or se_level).
+
+    se_user : string or None
+        SELinux context user as a string. Cannot be specified
+        simultaneously with se_context. If None, then the user
+        component of the context of dst is not changed (except
+        possibly by se_context).
+
+    se_role : string or None
+        SELinux context role as a string. Cannot be specified
+        simultaneously with se_context. If None, then the role
+        component of the context of dst is not changed (except
+        possibly by se_context).
+
+    se_type : string or None
+        SELinux context type as a string. Cannot be specified
+        simultaneously with se_context. If None, then the type
+        component of the context of dst is not changed (except
+        possibly by se_context).
+
+    se_level : string or None
+        SELinux context level as a string. Cannot be specified
+        simultaneously with se_context. If None, then the level
+        component of the context of dst is not changed (except
+        possibly by se_context).
+
     return : boolean
         Returns True if an attributed of dst was changed, otherwise
         False.
     """
+    if (se_context != None) \
+            and ((se_user != None) or (se_role != None) \
+                     or (se_type != None) or (se_level != None)):
+        raise PysysconfError("Cannot specify se_context"
+                             " simultaneously with any of se_user,"
+                             " se_role, se_type, or se_level.")
     dst_stat = os.lstat(dst)
     dst_mode = dst_stat.st_mode
     dst_uid = dst_stat.st_uid
     dst_gid = dst_stat.st_gid
     dst_perm = stat.S_IMODE(dst_mode)
+    if (se_context != None) or (se_user != None) \
+            or (se_role != None) or (se_type != None) \
+            or (se_level != None):
+        if not _HAVE_SELINUX_MODULE:
+            raise PysysconfError("SELinux properties specified but"
+                                 " no selinux module was imported.")
+        dst_se_context = selinux.lgetfilecon(dst)[1]
+        if dst_se_context == None:
+            raise PysysconfError("Error getting current SELinux"
+                                 " context for file %s" % dst)
     need_chown = False
     did_action = False
     if uid != None:
@@ -1025,11 +1303,32 @@ def _chkstat(dst, uid = None, gid = None, perm = None):
                 did_action = True
             except OSError, e:
                 raise PysysconfError("Could not chmod " + dst + " to " + str(perm))
+    if (se_user != None) or (se_role != None) \
+            or (se_type != None) or (se_level != None):
+        dst_se_context_elems = dst_se_context.split(":")
+        if se_user == None:
+            se_user = dst_se_context_elems[0]
+        if se_role == None:
+            se_role = dst_se_context_elems[1]
+        if se_type == None:
+            se_type = dst_se_context_elems[2]
+        if se_level == None:
+            se_level = ":".join(dst_se_context_elems[3:])
+        se_context = ":".join([se_user, se_role, se_type, se_level])
+    if se_context != None:
+        if not isinstance(se_context, str):
+            raise PysysconfError("Bad se_context specification: " + str(se_context))
+        if dst_se_context != se_context:
+            log(LOG_ACTION, "Changing SELinux context of %s from %s to %s"
+                % (dst, dst_se_context, se_context))
+        selinux.lsetfilecon(dst, se_context)
+        did_action = True
     return did_action
 
-def _chkstatsrc(src, dst, uid = None, gid = None,
-                perm = None, umask = None, dmask = None):
-    """Ensure that the stat data for dst matches that for src.
+def _chkstatsrc(src, dst, uid, gid, perm, umask, dmask,
+                se_context, se_user, se_role, se_type, se_level):
+    """Ensure that the stat data for dst matches that for src and
+    change the SELinux context if specified.
 
     src : string
         Filename of the source file, symlink, or directory.
@@ -1038,17 +1337,14 @@ def _chkstatsrc(src, dst, uid = None, gid = None,
         Filename of the destination object.
 
     uid : string, integer, or None
-        (optional: default = None)
         Username (if a string) or UID (if an int) that should own the
         dst object. If uid is None then the uid of dst is required to
-        be the same as that of src.
+        be the same as that of src, masked by umask (if not None).
 
     gid : string, integer, or None
-        (optional: default = None)
         Groupname, GID, or None, as for uid.
 
     perm : string, integer, or None
-        (optional: default = None)
         Permissions of dst. Can be a string containing an octal
         number, such as "0644", or an integer containing the same
         value, such as 0644. If None, then the permissions of dst will
@@ -1056,16 +1352,49 @@ def _chkstatsrc(src, dst, uid = None, gid = None,
         file) or dmask (if src is a directory).
 
     umask : string, integer, or None
-        (optional: default = None)
         Mask for permissions of dst for the case that src is not a
         directory. Will be applied to perm if it is not None,
         otherwise will be applied to the permissions of src. The
         format is the same as that of perm.
 
     dmask : string, integer, or None
-        (optional: default = None)
         Mask for permissions of dst for the case that src is a
         directory, as for umask.
+
+    se_context : string or None
+        SELinux context given as a string "user:role:type:level". If
+        se_context is not None then all of se_user, se_role, se_type,
+        and se_level must be None. If se_context is None then the
+        context of dst is not changed (except possibly by se_user,
+        se_role, se_type, or se_level).
+
+    se_user : string or None
+        SELinux context user as a string. Cannot be specified
+        simultaneously with se_context. If None, then the user
+        component of the context of dst is not changed (except
+        possibly by se_context).
+
+    se_role : string or None
+        SELinux context role as a string. Cannot be specified
+        simultaneously with se_context. If None, then the role
+        component of the context of dst is not changed (except
+        possibly by se_context).
+
+    se_type : string or None
+        SELinux context type as a string. Cannot be specified
+        simultaneously with se_context. If None, then the type
+        component of the context of dst is not changed (except
+        possibly by se_context).
+
+    se_level : string or None
+        SELinux context level as a string. Cannot be specified
+        simultaneously with se_context. If None, then the level
+        component of the context of dst is not changed (except
+        possibly by se_context).
+
+    return : boolean
+        Returns True if an attributed of dst was changed, otherwise
+        False.
     """
     src_stat = os.lstat(src)
     src_mode = src_stat.st_mode
@@ -1087,7 +1416,8 @@ def _chkstatsrc(src, dst, uid = None, gid = None,
                 perm = src_perm
             else:
                 perm = src_perm & umask
-    return _chkstat(dst, uid, gid, perm)
+    return _chkstat(dst, uid, gid, perm, se_context, se_user,
+                    se_role, se_type, se_level)
 
 def _remove_by_test(dst, test, follow_links = False, backup = True):
     """Delete files in dst that satisfy test.

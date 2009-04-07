@@ -8,8 +8,8 @@
 <td valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>pysysconf</strong></big></big></font></td
 ><td align=right valign=bottom
-><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/net/cluster/pysysconf/pysysconf.py">/net/cluster/pysysconf/pysysconf.py</a></font></td></tr></table>
-    <p><tt>Cfengine-style&nbsp;commands&nbsp;for&nbsp;system&nbsp;configuration.<br>
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/cluster/code/pysysconf/pysysconf.py">/cluster/code/pysysconf/pysysconf.py</a></font></td></tr></table>
+    <p><tt>Useful&nbsp;commands&nbsp;for&nbsp;system&nbsp;configuration.<br>
 &nbsp;<br>
 PySysConf&nbsp;provides&nbsp;a&nbsp;number&nbsp;of&nbsp;useful&nbsp;high-level&nbsp;functions&nbsp;for&nbsp;doing<br>
 system&nbsp;configuration.&nbsp;These&nbsp;are&nbsp;modeled&nbsp;on&nbsp;the&nbsp;commands&nbsp;in&nbsp;cfengine.<br>
@@ -43,10 +43,11 @@ exceptions&nbsp;fall&nbsp;through.</tt></p>
 </td><td width="25%" valign=top><a href="md5.html">md5</a><br>
 <a href="os.html">os</a><br>
 <a href="pwd.html">pwd</a><br>
-</td><td width="25%" valign=top><a href="socket.html">socket</a><br>
+</td><td width="25%" valign=top><a href="selinux.html">selinux</a><br>
+<a href="socket.html">socket</a><br>
 <a href="stat.html">stat</a><br>
-<a href="sys.html">sys</a><br>
-</td><td width="25%" valign=top><a href="syslog.html">syslog</a><br>
+</td><td width="25%" valign=top><a href="sys.html">sys</a><br>
+<a href="syslog.html">syslog</a><br>
 <a href="types.html">types</a><br>
 </td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
@@ -56,7 +57,7 @@ exceptions&nbsp;fall&nbsp;through.</tt></p>
     
 <tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
 <td width="100%"><dl>
-<dt><font face="helvetica, arial"><a href="exceptions.html#Exception">exceptions.Exception</a>
+<dt><font face="helvetica, arial"><a href="exceptions.html#Exception">exceptions.Exception</a>(<a href="exceptions.html#BaseException">exceptions.BaseException</a>)
 </font></dt><dd>
 <dl>
 <dt><font face="helvetica, arial"><a href="pysysconf.html#PysysconfError">PysysconfError</a>
@@ -81,13 +82,56 @@ exceptions&nbsp;fall&nbsp;through.</tt></p>
 <tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
 <td colspan=2><tt>Class&nbsp;used&nbsp;for&nbsp;all&nbsp;exceptions&nbsp;raised&nbsp;directly&nbsp;by&nbsp;this&nbsp;module.<br>&nbsp;</tt></td></tr>
 <tr><td>&nbsp;</td>
-<td width="100%">Methods inherited from <a href="exceptions.html#Exception">exceptions.Exception</a>:<br>
-<dl><dt><a name="PysysconfError-__getitem__"><strong>__getitem__</strong></a>(...)</dt></dl>
+<td width="100%"><dl><dt>Method resolution order:</dt>
+<dd><a href="pysysconf.html#PysysconfError">PysysconfError</a></dd>
+<dd><a href="exceptions.html#Exception">exceptions.Exception</a></dd>
+<dd><a href="exceptions.html#BaseException">exceptions.BaseException</a></dd>
+<dd><a href="__builtin__.html#object">__builtin__.object</a></dd>
+</dl>
+<hr>
+Data descriptors defined here:<br>
+<dl><dt><strong>__weakref__</strong></dt>
+<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
+</dl>
+<hr>
+Methods inherited from <a href="exceptions.html#Exception">exceptions.Exception</a>:<br>
+<dl><dt><a name="PysysconfError-__init__"><strong>__init__</strong></a>(...)</dt><dd><tt>x.<a href="#PysysconfError-__init__">__init__</a>(...)&nbsp;initializes&nbsp;x;&nbsp;see&nbsp;x.__class__.__doc__&nbsp;for&nbsp;signature</tt></dd></dl>
 
-<dl><dt><a name="PysysconfError-__init__"><strong>__init__</strong></a>(...)</dt></dl>
+<hr>
+Data and other attributes inherited from <a href="exceptions.html#Exception">exceptions.Exception</a>:<br>
+<dl><dt><strong>__new__</strong> = &lt;built-in method __new__ of type object at 0x3be5140300&gt;<dd><tt>T.<a href="#PysysconfError-__new__">__new__</a>(S,&nbsp;...)&nbsp;-&gt;&nbsp;a&nbsp;new&nbsp;object&nbsp;with&nbsp;type&nbsp;S,&nbsp;a&nbsp;subtype&nbsp;of&nbsp;T</tt></dl>
 
-<dl><dt><a name="PysysconfError-__str__"><strong>__str__</strong></a>(...)</dt></dl>
+<hr>
+Methods inherited from <a href="exceptions.html#BaseException">exceptions.BaseException</a>:<br>
+<dl><dt><a name="PysysconfError-__delattr__"><strong>__delattr__</strong></a>(...)</dt><dd><tt>x.<a href="#PysysconfError-__delattr__">__delattr__</a>('name')&nbsp;&lt;==&gt;&nbsp;del&nbsp;x.name</tt></dd></dl>
 
+<dl><dt><a name="PysysconfError-__getattribute__"><strong>__getattribute__</strong></a>(...)</dt><dd><tt>x.<a href="#PysysconfError-__getattribute__">__getattribute__</a>('name')&nbsp;&lt;==&gt;&nbsp;x.name</tt></dd></dl>
+
+<dl><dt><a name="PysysconfError-__getitem__"><strong>__getitem__</strong></a>(...)</dt><dd><tt>x.<a href="#PysysconfError-__getitem__">__getitem__</a>(y)&nbsp;&lt;==&gt;&nbsp;x[y]</tt></dd></dl>
+
+<dl><dt><a name="PysysconfError-__getslice__"><strong>__getslice__</strong></a>(...)</dt><dd><tt>x.<a href="#PysysconfError-__getslice__">__getslice__</a>(i,&nbsp;j)&nbsp;&lt;==&gt;&nbsp;x[i:j]<br>
+&nbsp;<br>
+Use&nbsp;of&nbsp;negative&nbsp;indices&nbsp;is&nbsp;not&nbsp;supported.</tt></dd></dl>
+
+<dl><dt><a name="PysysconfError-__reduce__"><strong>__reduce__</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="PysysconfError-__repr__"><strong>__repr__</strong></a>(...)</dt><dd><tt>x.<a href="#PysysconfError-__repr__">__repr__</a>()&nbsp;&lt;==&gt;&nbsp;repr(x)</tt></dd></dl>
+
+<dl><dt><a name="PysysconfError-__setattr__"><strong>__setattr__</strong></a>(...)</dt><dd><tt>x.<a href="#PysysconfError-__setattr__">__setattr__</a>('name',&nbsp;value)&nbsp;&lt;==&gt;&nbsp;x.name&nbsp;=&nbsp;value</tt></dd></dl>
+
+<dl><dt><a name="PysysconfError-__setstate__"><strong>__setstate__</strong></a>(...)</dt></dl>
+
+<dl><dt><a name="PysysconfError-__str__"><strong>__str__</strong></a>(...)</dt><dd><tt>x.<a href="#PysysconfError-__str__">__str__</a>()&nbsp;&lt;==&gt;&nbsp;str(x)</tt></dd></dl>
+
+<hr>
+Data descriptors inherited from <a href="exceptions.html#BaseException">exceptions.BaseException</a>:<br>
+<dl><dt><strong>__dict__</strong></dt>
+</dl>
+<dl><dt><strong>args</strong></dt>
+</dl>
+<dl><dt><strong>message</strong></dt>
+<dd><tt>exception&nbsp;message</tt></dd>
+</dl>
 </td></tr></table> <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#ffc8d8">
@@ -182,7 +226,7 @@ return&nbsp;:&nbsp;boolean<br>
 &nbsp;<br>
 e.g.&nbsp;Lock&nbsp;a&nbsp;copy&nbsp;operation:<br>
 &gt;&gt;&gt;&nbsp;<a href="#-acquire_lock">acquire_lock</a>("/var/lock/pysysconf/copylock")</tt></dd></dl>
- <dl><dt><a name="-check_copy"><strong>check_copy</strong></a>(src, dst, uid<font color="#909090">=None</font>, gid<font color="#909090">=None</font>, perm<font color="#909090">=None</font>, umask<font color="#909090">=None</font>, dmask<font color="#909090">=None</font>, backup<font color="#909090">=True</font>, purge<font color="#909090">=False</font>)</dt><dd><tt>Check&nbsp;the&nbsp;copy&nbsp;of&nbsp;a&nbsp;file,&nbsp;symlink,&nbsp;or&nbsp;directory.<br>
+ <dl><dt><a name="-check_copy"><strong>check_copy</strong></a>(src, dst, uid<font color="#909090">=None</font>, gid<font color="#909090">=None</font>, perm<font color="#909090">=None</font>, umask<font color="#909090">=None</font>, dmask<font color="#909090">=None</font>, se_context<font color="#909090">=None</font>, se_user<font color="#909090">=None</font>, se_role<font color="#909090">=None</font>, se_type<font color="#909090">=None</font>, se_level<font color="#909090">=None</font>, backup<font color="#909090">=True</font>, purge<font color="#909090">=False</font>)</dt><dd><tt>Check&nbsp;the&nbsp;copy&nbsp;of&nbsp;a&nbsp;file,&nbsp;symlink,&nbsp;or&nbsp;directory.<br>
 &nbsp;<br>
 src&nbsp;:&nbsp;string<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Filename&nbsp;of&nbsp;the&nbsp;source&nbsp;file,&nbsp;symlink,&nbsp;or&nbsp;directory.<br>
@@ -222,6 +266,42 @@ dmask&nbsp;:&nbsp;string,&nbsp;integer,&nbsp;or&nbsp;None<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Mask&nbsp;for&nbsp;permissions&nbsp;of&nbsp;dst&nbsp;for&nbsp;the&nbsp;case&nbsp;that&nbsp;dst&nbsp;is&nbsp;a<br>
 &nbsp;&nbsp;&nbsp;&nbsp;directory,&nbsp;as&nbsp;for&nbsp;umask.<br>
 &nbsp;<br>
+se_context&nbsp;:&nbsp;string&nbsp;or&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;None)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;SELinux&nbsp;context&nbsp;given&nbsp;as&nbsp;a&nbsp;string&nbsp;"user:role:type:level".&nbsp;If<br>
+&nbsp;&nbsp;&nbsp;&nbsp;se_context&nbsp;is&nbsp;not&nbsp;None&nbsp;then&nbsp;all&nbsp;of&nbsp;se_user,&nbsp;se_role,&nbsp;se_type,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;and&nbsp;se_level&nbsp;must&nbsp;be&nbsp;None.&nbsp;If&nbsp;se_context&nbsp;is&nbsp;None&nbsp;then&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;context&nbsp;of&nbsp;dst&nbsp;is&nbsp;not&nbsp;changed&nbsp;(except&nbsp;possibly&nbsp;by&nbsp;se_user,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;se_role,&nbsp;se_type,&nbsp;or&nbsp;se_level).<br>
+&nbsp;<br>
+se_user&nbsp;:&nbsp;string&nbsp;or&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;None)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;SELinux&nbsp;context&nbsp;user&nbsp;as&nbsp;a&nbsp;string.&nbsp;Cannot&nbsp;be&nbsp;specified<br>
+&nbsp;&nbsp;&nbsp;&nbsp;simultaneously&nbsp;with&nbsp;se_context.&nbsp;If&nbsp;None,&nbsp;then&nbsp;the&nbsp;user<br>
+&nbsp;&nbsp;&nbsp;&nbsp;component&nbsp;of&nbsp;the&nbsp;context&nbsp;of&nbsp;dst&nbsp;is&nbsp;not&nbsp;changed&nbsp;(except<br>
+&nbsp;&nbsp;&nbsp;&nbsp;possibly&nbsp;by&nbsp;se_context).<br>
+&nbsp;<br>
+se_role&nbsp;:&nbsp;string&nbsp;or&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;None)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;SELinux&nbsp;context&nbsp;role&nbsp;as&nbsp;a&nbsp;string.&nbsp;Cannot&nbsp;be&nbsp;specified<br>
+&nbsp;&nbsp;&nbsp;&nbsp;simultaneously&nbsp;with&nbsp;se_context.&nbsp;If&nbsp;None,&nbsp;then&nbsp;the&nbsp;role<br>
+&nbsp;&nbsp;&nbsp;&nbsp;component&nbsp;of&nbsp;the&nbsp;context&nbsp;of&nbsp;dst&nbsp;is&nbsp;not&nbsp;changed&nbsp;(except<br>
+&nbsp;&nbsp;&nbsp;&nbsp;possibly&nbsp;by&nbsp;se_context).<br>
+&nbsp;<br>
+se_type&nbsp;:&nbsp;string&nbsp;or&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;None)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;SELinux&nbsp;context&nbsp;type&nbsp;as&nbsp;a&nbsp;string.&nbsp;Cannot&nbsp;be&nbsp;specified<br>
+&nbsp;&nbsp;&nbsp;&nbsp;simultaneously&nbsp;with&nbsp;se_context.&nbsp;If&nbsp;None,&nbsp;then&nbsp;the&nbsp;type<br>
+&nbsp;&nbsp;&nbsp;&nbsp;component&nbsp;of&nbsp;the&nbsp;context&nbsp;of&nbsp;dst&nbsp;is&nbsp;not&nbsp;changed&nbsp;(except<br>
+&nbsp;&nbsp;&nbsp;&nbsp;possibly&nbsp;by&nbsp;se_context).<br>
+&nbsp;<br>
+se_level&nbsp;:&nbsp;string&nbsp;or&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;None)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;SELinux&nbsp;context&nbsp;level&nbsp;as&nbsp;a&nbsp;string.&nbsp;Cannot&nbsp;be&nbsp;specified<br>
+&nbsp;&nbsp;&nbsp;&nbsp;simultaneously&nbsp;with&nbsp;se_context.&nbsp;If&nbsp;None,&nbsp;then&nbsp;the&nbsp;level<br>
+&nbsp;&nbsp;&nbsp;&nbsp;component&nbsp;of&nbsp;the&nbsp;context&nbsp;of&nbsp;dst&nbsp;is&nbsp;not&nbsp;changed&nbsp;(except<br>
+&nbsp;&nbsp;&nbsp;&nbsp;possibly&nbsp;by&nbsp;se_context).<br>
+&nbsp;<br>
 backup&nbsp;:&nbsp;boolean<br>
 &nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;True)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;to&nbsp;backup&nbsp;dst&nbsp;if&nbsp;it&nbsp;will&nbsp;be&nbsp;overwritten.<br>
@@ -239,7 +319,7 @@ e.g.&nbsp;Check&nbsp;that&nbsp;a&nbsp;single&nbsp;file&nbsp;is&nbsp;a&nbsp;copy:
 &nbsp;<br>
 e.g.&nbsp;Check&nbsp;that&nbsp;a&nbsp;directory&nbsp;is&nbsp;an&nbsp;exact&nbsp;copy,&nbsp;without&nbsp;backup:<br>
 &gt;&gt;&gt;&nbsp;<a href="#-check_copy">check_copy</a>("ppds",&nbsp;"/etc/cups/ppds",&nbsp;purge&nbsp;=&nbsp;True,&nbsp;backup&nbsp;=&nbsp;False)</tt></dd></dl>
- <dl><dt><a name="-check_dir_exists"><strong>check_dir_exists</strong></a>(dst, uid<font color="#909090">=None</font>, gid<font color="#909090">=None</font>, perm<font color="#909090">=None</font>, backup<font color="#909090">=True</font>)</dt><dd><tt>Check&nbsp;that&nbsp;the&nbsp;directory&nbsp;named&nbsp;dst&nbsp;exists&nbsp;and&nbsp;has&nbsp;the&nbsp;specified<br>
+ <dl><dt><a name="-check_dir_exists"><strong>check_dir_exists</strong></a>(dst, uid<font color="#909090">=None</font>, gid<font color="#909090">=None</font>, perm<font color="#909090">=None</font>, se_context<font color="#909090">=None</font>, se_user<font color="#909090">=None</font>, se_role<font color="#909090">=None</font>, se_type<font color="#909090">=None</font>, se_level<font color="#909090">=None</font>, backup<font color="#909090">=True</font>)</dt><dd><tt>Check&nbsp;that&nbsp;the&nbsp;directory&nbsp;named&nbsp;dst&nbsp;exists&nbsp;and&nbsp;has&nbsp;the&nbsp;specified<br>
 ownership&nbsp;and&nbsp;permissions.&nbsp;The&nbsp;path&nbsp;to&nbsp;dst&nbsp;must&nbsp;already&nbsp;exist.<br>
 &nbsp;<br>
 dst&nbsp;:&nbsp;string<br>
@@ -261,6 +341,42 @@ perm&nbsp;:&nbsp;string,&nbsp;integer,&nbsp;or&nbsp;None<br>
 &nbsp;&nbsp;&nbsp;&nbsp;same&nbsp;value,&nbsp;such&nbsp;as&nbsp;0644.&nbsp;If&nbsp;None,&nbsp;then&nbsp;the&nbsp;permissions<br>
 &nbsp;&nbsp;&nbsp;&nbsp;of&nbsp;dst&nbsp;will&nbsp;be&nbsp;the&nbsp;default.<br>
 &nbsp;<br>
+se_context&nbsp;:&nbsp;string&nbsp;or&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;None)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;SELinux&nbsp;context&nbsp;given&nbsp;as&nbsp;a&nbsp;string&nbsp;"user:role:type:level".&nbsp;If<br>
+&nbsp;&nbsp;&nbsp;&nbsp;se_context&nbsp;is&nbsp;not&nbsp;None&nbsp;then&nbsp;all&nbsp;of&nbsp;se_user,&nbsp;se_role,&nbsp;se_type,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;and&nbsp;se_level&nbsp;must&nbsp;be&nbsp;None.&nbsp;If&nbsp;se_context&nbsp;is&nbsp;None&nbsp;then&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;context&nbsp;of&nbsp;dst&nbsp;is&nbsp;not&nbsp;changed&nbsp;(except&nbsp;possibly&nbsp;by&nbsp;se_user,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;se_role,&nbsp;se_type,&nbsp;or&nbsp;se_level).<br>
+&nbsp;<br>
+se_user&nbsp;:&nbsp;string&nbsp;or&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;None)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;SELinux&nbsp;context&nbsp;user&nbsp;as&nbsp;a&nbsp;string.&nbsp;Cannot&nbsp;be&nbsp;specified<br>
+&nbsp;&nbsp;&nbsp;&nbsp;simultaneously&nbsp;with&nbsp;se_context.&nbsp;If&nbsp;None,&nbsp;then&nbsp;the&nbsp;user<br>
+&nbsp;&nbsp;&nbsp;&nbsp;component&nbsp;of&nbsp;the&nbsp;context&nbsp;of&nbsp;dst&nbsp;is&nbsp;not&nbsp;changed&nbsp;(except<br>
+&nbsp;&nbsp;&nbsp;&nbsp;possibly&nbsp;by&nbsp;se_context).<br>
+&nbsp;<br>
+se_role&nbsp;:&nbsp;string&nbsp;or&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;None)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;SELinux&nbsp;context&nbsp;role&nbsp;as&nbsp;a&nbsp;string.&nbsp;Cannot&nbsp;be&nbsp;specified<br>
+&nbsp;&nbsp;&nbsp;&nbsp;simultaneously&nbsp;with&nbsp;se_context.&nbsp;If&nbsp;None,&nbsp;then&nbsp;the&nbsp;role<br>
+&nbsp;&nbsp;&nbsp;&nbsp;component&nbsp;of&nbsp;the&nbsp;context&nbsp;of&nbsp;dst&nbsp;is&nbsp;not&nbsp;changed&nbsp;(except<br>
+&nbsp;&nbsp;&nbsp;&nbsp;possibly&nbsp;by&nbsp;se_context).<br>
+&nbsp;<br>
+se_type&nbsp;:&nbsp;string&nbsp;or&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;None)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;SELinux&nbsp;context&nbsp;type&nbsp;as&nbsp;a&nbsp;string.&nbsp;Cannot&nbsp;be&nbsp;specified<br>
+&nbsp;&nbsp;&nbsp;&nbsp;simultaneously&nbsp;with&nbsp;se_context.&nbsp;If&nbsp;None,&nbsp;then&nbsp;the&nbsp;type<br>
+&nbsp;&nbsp;&nbsp;&nbsp;component&nbsp;of&nbsp;the&nbsp;context&nbsp;of&nbsp;dst&nbsp;is&nbsp;not&nbsp;changed&nbsp;(except<br>
+&nbsp;&nbsp;&nbsp;&nbsp;possibly&nbsp;by&nbsp;se_context).<br>
+&nbsp;<br>
+se_level&nbsp;:&nbsp;string&nbsp;or&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;None)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;SELinux&nbsp;context&nbsp;level&nbsp;as&nbsp;a&nbsp;string.&nbsp;Cannot&nbsp;be&nbsp;specified<br>
+&nbsp;&nbsp;&nbsp;&nbsp;simultaneously&nbsp;with&nbsp;se_context.&nbsp;If&nbsp;None,&nbsp;then&nbsp;the&nbsp;level<br>
+&nbsp;&nbsp;&nbsp;&nbsp;component&nbsp;of&nbsp;the&nbsp;context&nbsp;of&nbsp;dst&nbsp;is&nbsp;not&nbsp;changed&nbsp;(except<br>
+&nbsp;&nbsp;&nbsp;&nbsp;possibly&nbsp;by&nbsp;se_context).<br>
+&nbsp;<br>
 backup&nbsp;:&nbsp;boolean<br>
 &nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;True)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;to&nbsp;backup&nbsp;dst&nbsp;if&nbsp;it&nbsp;will&nbsp;be&nbsp;replaced.<br>
@@ -270,7 +386,7 @@ return&nbsp;:&nbsp;boolean<br>
 &nbsp;<br>
 e.g.&nbsp;Check&nbsp;that&nbsp;the&nbsp;directory&nbsp;/var/pysysconf&nbsp;exists:<br>
 &gt;&gt;&gt;&nbsp;<a href="#-check_dir_exists">check_dir_exists</a>("/var/pysysconf")</tt></dd></dl>
- <dl><dt><a name="-check_file_exists"><strong>check_file_exists</strong></a>(dst, uid<font color="#909090">=None</font>, gid<font color="#909090">=None</font>, perm<font color="#909090">=None</font>, backup<font color="#909090">=True</font>)</dt><dd><tt>Check&nbsp;that&nbsp;the&nbsp;file&nbsp;named&nbsp;dst&nbsp;exists&nbsp;and&nbsp;has&nbsp;the&nbsp;specified<br>
+ <dl><dt><a name="-check_file_exists"><strong>check_file_exists</strong></a>(dst, uid<font color="#909090">=None</font>, gid<font color="#909090">=None</font>, perm<font color="#909090">=None</font>, se_context<font color="#909090">=None</font>, se_user<font color="#909090">=None</font>, se_role<font color="#909090">=None</font>, se_type<font color="#909090">=None</font>, se_level<font color="#909090">=None</font>, backup<font color="#909090">=True</font>)</dt><dd><tt>Check&nbsp;that&nbsp;the&nbsp;file&nbsp;named&nbsp;dst&nbsp;exists&nbsp;and&nbsp;has&nbsp;the&nbsp;specified<br>
 ownership&nbsp;and&nbsp;permissions.&nbsp;The&nbsp;path&nbsp;to&nbsp;dst&nbsp;must&nbsp;already&nbsp;exist.<br>
 &nbsp;<br>
 dst&nbsp;:&nbsp;string<br>
@@ -292,6 +408,42 @@ perm&nbsp;:&nbsp;string,&nbsp;integer,&nbsp;or&nbsp;None<br>
 &nbsp;&nbsp;&nbsp;&nbsp;same&nbsp;value,&nbsp;such&nbsp;as&nbsp;0644.&nbsp;If&nbsp;None,&nbsp;then&nbsp;the&nbsp;permissions<br>
 &nbsp;&nbsp;&nbsp;&nbsp;of&nbsp;dst&nbsp;will&nbsp;be&nbsp;the&nbsp;default.<br>
 &nbsp;<br>
+se_context&nbsp;:&nbsp;string&nbsp;or&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;None)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;SELinux&nbsp;context&nbsp;given&nbsp;as&nbsp;a&nbsp;string&nbsp;"user:role:type:level".&nbsp;If<br>
+&nbsp;&nbsp;&nbsp;&nbsp;se_context&nbsp;is&nbsp;not&nbsp;None&nbsp;then&nbsp;all&nbsp;of&nbsp;se_user,&nbsp;se_role,&nbsp;se_type,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;and&nbsp;se_level&nbsp;must&nbsp;be&nbsp;None.&nbsp;If&nbsp;se_context&nbsp;is&nbsp;None&nbsp;then&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;context&nbsp;of&nbsp;dst&nbsp;is&nbsp;not&nbsp;changed&nbsp;(except&nbsp;possibly&nbsp;by&nbsp;se_user,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;se_role,&nbsp;se_type,&nbsp;or&nbsp;se_level).<br>
+&nbsp;<br>
+se_user&nbsp;:&nbsp;string&nbsp;or&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;None)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;SELinux&nbsp;context&nbsp;user&nbsp;as&nbsp;a&nbsp;string.&nbsp;Cannot&nbsp;be&nbsp;specified<br>
+&nbsp;&nbsp;&nbsp;&nbsp;simultaneously&nbsp;with&nbsp;se_context.&nbsp;If&nbsp;None,&nbsp;then&nbsp;the&nbsp;user<br>
+&nbsp;&nbsp;&nbsp;&nbsp;component&nbsp;of&nbsp;the&nbsp;context&nbsp;of&nbsp;dst&nbsp;is&nbsp;not&nbsp;changed&nbsp;(except<br>
+&nbsp;&nbsp;&nbsp;&nbsp;possibly&nbsp;by&nbsp;se_context).<br>
+&nbsp;<br>
+se_role&nbsp;:&nbsp;string&nbsp;or&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;None)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;SELinux&nbsp;context&nbsp;role&nbsp;as&nbsp;a&nbsp;string.&nbsp;Cannot&nbsp;be&nbsp;specified<br>
+&nbsp;&nbsp;&nbsp;&nbsp;simultaneously&nbsp;with&nbsp;se_context.&nbsp;If&nbsp;None,&nbsp;then&nbsp;the&nbsp;role<br>
+&nbsp;&nbsp;&nbsp;&nbsp;component&nbsp;of&nbsp;the&nbsp;context&nbsp;of&nbsp;dst&nbsp;is&nbsp;not&nbsp;changed&nbsp;(except<br>
+&nbsp;&nbsp;&nbsp;&nbsp;possibly&nbsp;by&nbsp;se_context).<br>
+&nbsp;<br>
+se_type&nbsp;:&nbsp;string&nbsp;or&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;None)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;SELinux&nbsp;context&nbsp;type&nbsp;as&nbsp;a&nbsp;string.&nbsp;Cannot&nbsp;be&nbsp;specified<br>
+&nbsp;&nbsp;&nbsp;&nbsp;simultaneously&nbsp;with&nbsp;se_context.&nbsp;If&nbsp;None,&nbsp;then&nbsp;the&nbsp;type<br>
+&nbsp;&nbsp;&nbsp;&nbsp;component&nbsp;of&nbsp;the&nbsp;context&nbsp;of&nbsp;dst&nbsp;is&nbsp;not&nbsp;changed&nbsp;(except<br>
+&nbsp;&nbsp;&nbsp;&nbsp;possibly&nbsp;by&nbsp;se_context).<br>
+&nbsp;<br>
+se_level&nbsp;:&nbsp;string&nbsp;or&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;None)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;SELinux&nbsp;context&nbsp;level&nbsp;as&nbsp;a&nbsp;string.&nbsp;Cannot&nbsp;be&nbsp;specified<br>
+&nbsp;&nbsp;&nbsp;&nbsp;simultaneously&nbsp;with&nbsp;se_context.&nbsp;If&nbsp;None,&nbsp;then&nbsp;the&nbsp;level<br>
+&nbsp;&nbsp;&nbsp;&nbsp;component&nbsp;of&nbsp;the&nbsp;context&nbsp;of&nbsp;dst&nbsp;is&nbsp;not&nbsp;changed&nbsp;(except<br>
+&nbsp;&nbsp;&nbsp;&nbsp;possibly&nbsp;by&nbsp;se_context).<br>
+&nbsp;<br>
 backup&nbsp;:&nbsp;boolean<br>
 &nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;True)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;to&nbsp;backup&nbsp;dst&nbsp;if&nbsp;it&nbsp;will&nbsp;be&nbsp;replaced.<br>
@@ -301,7 +453,7 @@ return&nbsp;:&nbsp;boolean<br>
 &nbsp;<br>
 e.g.&nbsp;Check&nbsp;that&nbsp;/etc/nologin&nbsp;exists&nbsp;and&nbsp;is&nbsp;owned&nbsp;by&nbsp;root:<br>
 &gt;&gt;&gt;&nbsp;<a href="#-check_file_exists">check_file_exists</a>("/etc/nologin",&nbsp;uid&nbsp;=&nbsp;"root")</tt></dd></dl>
- <dl><dt><a name="-check_link"><strong>check_link</strong></a>(src, dst, uid<font color="#909090">=None</font>, gid<font color="#909090">=None</font>, backup<font color="#909090">=True</font>)</dt><dd><tt>Check&nbsp;that&nbsp;dst&nbsp;is&nbsp;a&nbsp;symlink&nbsp;to&nbsp;src.<br>
+ <dl><dt><a name="-check_link"><strong>check_link</strong></a>(src, dst, uid<font color="#909090">=None</font>, gid<font color="#909090">=None</font>, se_context<font color="#909090">=None</font>, se_user<font color="#909090">=None</font>, se_role<font color="#909090">=None</font>, se_type<font color="#909090">=None</font>, se_level<font color="#909090">=None</font>, backup<font color="#909090">=True</font>)</dt><dd><tt>Check&nbsp;that&nbsp;dst&nbsp;is&nbsp;a&nbsp;symlink&nbsp;to&nbsp;src.<br>
 &nbsp;<br>
 src&nbsp;:&nbsp;string<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Filename&nbsp;of&nbsp;the&nbsp;source&nbsp;file,&nbsp;symlink,&nbsp;or&nbsp;directory.<br>
@@ -317,6 +469,42 @@ uid&nbsp;:&nbsp;string,&nbsp;integer,&nbsp;or&nbsp;None<br>
 gid&nbsp;:&nbsp;string,&nbsp;integer,&nbsp;or&nbsp;None<br>
 &nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;None)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Groupname&nbsp;or&nbsp;GID,&nbsp;as&nbsp;for&nbsp;uid.<br>
+&nbsp;<br>
+se_context&nbsp;:&nbsp;string&nbsp;or&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;None)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;SELinux&nbsp;context&nbsp;given&nbsp;as&nbsp;a&nbsp;string&nbsp;"user:role:type:level".&nbsp;If<br>
+&nbsp;&nbsp;&nbsp;&nbsp;se_context&nbsp;is&nbsp;not&nbsp;None&nbsp;then&nbsp;all&nbsp;of&nbsp;se_user,&nbsp;se_role,&nbsp;se_type,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;and&nbsp;se_level&nbsp;must&nbsp;be&nbsp;None.&nbsp;If&nbsp;se_context&nbsp;is&nbsp;None&nbsp;then&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;context&nbsp;of&nbsp;dst&nbsp;is&nbsp;not&nbsp;changed&nbsp;(except&nbsp;possibly&nbsp;by&nbsp;se_user,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;se_role,&nbsp;se_type,&nbsp;or&nbsp;se_level).<br>
+&nbsp;<br>
+se_user&nbsp;:&nbsp;string&nbsp;or&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;None)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;SELinux&nbsp;context&nbsp;user&nbsp;as&nbsp;a&nbsp;string.&nbsp;Cannot&nbsp;be&nbsp;specified<br>
+&nbsp;&nbsp;&nbsp;&nbsp;simultaneously&nbsp;with&nbsp;se_context.&nbsp;If&nbsp;None,&nbsp;then&nbsp;the&nbsp;user<br>
+&nbsp;&nbsp;&nbsp;&nbsp;component&nbsp;of&nbsp;the&nbsp;context&nbsp;of&nbsp;dst&nbsp;is&nbsp;not&nbsp;changed&nbsp;(except<br>
+&nbsp;&nbsp;&nbsp;&nbsp;possibly&nbsp;by&nbsp;se_context).<br>
+&nbsp;<br>
+se_role&nbsp;:&nbsp;string&nbsp;or&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;None)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;SELinux&nbsp;context&nbsp;role&nbsp;as&nbsp;a&nbsp;string.&nbsp;Cannot&nbsp;be&nbsp;specified<br>
+&nbsp;&nbsp;&nbsp;&nbsp;simultaneously&nbsp;with&nbsp;se_context.&nbsp;If&nbsp;None,&nbsp;then&nbsp;the&nbsp;role<br>
+&nbsp;&nbsp;&nbsp;&nbsp;component&nbsp;of&nbsp;the&nbsp;context&nbsp;of&nbsp;dst&nbsp;is&nbsp;not&nbsp;changed&nbsp;(except<br>
+&nbsp;&nbsp;&nbsp;&nbsp;possibly&nbsp;by&nbsp;se_context).<br>
+&nbsp;<br>
+se_type&nbsp;:&nbsp;string&nbsp;or&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;None)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;SELinux&nbsp;context&nbsp;type&nbsp;as&nbsp;a&nbsp;string.&nbsp;Cannot&nbsp;be&nbsp;specified<br>
+&nbsp;&nbsp;&nbsp;&nbsp;simultaneously&nbsp;with&nbsp;se_context.&nbsp;If&nbsp;None,&nbsp;then&nbsp;the&nbsp;type<br>
+&nbsp;&nbsp;&nbsp;&nbsp;component&nbsp;of&nbsp;the&nbsp;context&nbsp;of&nbsp;dst&nbsp;is&nbsp;not&nbsp;changed&nbsp;(except<br>
+&nbsp;&nbsp;&nbsp;&nbsp;possibly&nbsp;by&nbsp;se_context).<br>
+&nbsp;<br>
+se_level&nbsp;:&nbsp;string&nbsp;or&nbsp;None<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;None)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;SELinux&nbsp;context&nbsp;level&nbsp;as&nbsp;a&nbsp;string.&nbsp;Cannot&nbsp;be&nbsp;specified<br>
+&nbsp;&nbsp;&nbsp;&nbsp;simultaneously&nbsp;with&nbsp;se_context.&nbsp;If&nbsp;None,&nbsp;then&nbsp;the&nbsp;level<br>
+&nbsp;&nbsp;&nbsp;&nbsp;component&nbsp;of&nbsp;the&nbsp;context&nbsp;of&nbsp;dst&nbsp;is&nbsp;not&nbsp;changed&nbsp;(except<br>
+&nbsp;&nbsp;&nbsp;&nbsp;possibly&nbsp;by&nbsp;se_context).<br>
 &nbsp;<br>
 backup&nbsp;:&nbsp;boolean<br>
 &nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;True)<br>
@@ -370,6 +558,19 @@ rpm_name&nbsp;:&nbsp;string<br>
 &nbsp;<br>
 e.g.&nbsp;make&nbsp;sure&nbsp;the&nbsp;latest&nbsp;version&nbsp;of&nbsp;matlab&nbsp;is&nbsp;installed:<br>
 &gt;&gt;&gt;&nbsp;<a href="#-check_rpm_installed">check_rpm_installed</a>("matlab")</tt></dd></dl>
+ <dl><dt><a name="-check_selinux_bool"><strong>check_selinux_bool</strong></a>(bool_name, bool_value)</dt><dd><tt>Ensure&nbsp;that&nbsp;the&nbsp;given&nbsp;SELinux&nbsp;boolean&nbsp;has&nbsp;the&nbsp;given&nbsp;value.<br>
+&nbsp;<br>
+bool_name&nbsp;:&nbsp;string<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Name&nbsp;of&nbsp;the&nbsp;boolean&nbsp;to&nbsp;check.<br>
+&nbsp;<br>
+bool_value:&nbsp;boolean<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Value&nbsp;that&nbsp;the&nbsp;boolean&nbsp;must&nbsp;have.<br>
+&nbsp;<br>
+return&nbsp;:&nbsp;boolean<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;any&nbsp;change&nbsp;was&nbsp;made&nbsp;to&nbsp;the&nbsp;boolean&nbsp;status.<br>
+&nbsp;<br>
+e.g.&nbsp;make&nbsp;sure&nbsp;the&nbsp;webserver&nbsp;can&nbsp;access&nbsp;user&nbsp;home&nbsp;directories:<br>
+&gt;&gt;&gt;&nbsp;check_sebool("httpd_enable_homedirs",&nbsp;True)</tt></dd></dl>
  <dl><dt><a name="-check_service_disabled"><strong>check_service_disabled</strong></a>(service_name)</dt><dd><tt>Ensure&nbsp;that&nbsp;the&nbsp;given&nbsp;service&nbsp;is&nbsp;currently&nbsp;not&nbsp;running&nbsp;and<br>
 will&nbsp;not&nbsp;start&nbsp;on&nbsp;boot.<br>
 &nbsp;<br>
