@@ -697,27 +697,36 @@ def check_service_enabled(service_name, needs_restart = False,
         Whether the service should be reloaded if it is already
         running. Is superceded by needs_restart.
 
+    return : boolean
+	Whether any change was made to the service.
+
     e.g. Make sure slapd is running:
     >>> check_service_enabled("ldap")
     """
+    change_made = False
     if shell_command("/sbin/service " + service_name + " status > /dev/null"):
+        change_made = True
         log(LOG_ACTION, "Starting " + service_name)
         shell_command("/sbin/service " + service_name + " start")
     else:
         log(LOG_NO_ACTION, service_name + " is already running")
         if needs_restart:
+            change_made = True
             log(LOG_ACTION, "Restarting " + service_name)
             shell_command("/sbin/service " + service_name + " restart")
         else:
             if needs_reload:
+                change_made = True
                 log(LOG_ACTION, "Reloading " + service_name)
                 shell_command("/sbin/service " + service_name + " reload")
     if shell_command("/sbin/chkconfig --list " + service_name \
                          + " | grep -q \":on\""):
+        change_made = True
         log(LOG_ACTION, "Turning on " + service_name);
         shell_command("/sbin/chkconfig " + service_name + " on")
     else:
         log(LOG_NO_ACTION, service_name + " is already on")
+    return change_made
 
 def check_service_disabled(service_name):
     """Ensure that the given service is currently not running and
@@ -726,21 +735,28 @@ def check_service_disabled(service_name):
     service_name : string
         Name of service to disable.
 
+    return : boolean
+	Whether any change was made to the service.
+
     e.g. Make sure apache is not running:
     >>> check_service_disabled("httpd")
     """
+    change_made = False
     if not shell_command("/sbin/service " + service_name + " status"
                          + " > /dev/null"):
+        change_made = True
         log(LOG_ACTION, "Stopping " + service_name);
         shell_command("/sbin/service " + service_name + " stop")
     else:
         log(LOG_NO_ACTION, service_name + " is already stopped")
     if not shell_command("/sbin/chkconfig --list " + service_name \
                          + " | grep -q \":on\""):
+        change_made = True
         log(LOG_ACTION, "Turning off " + service_name);
         shell_command("/sbin/chkconfig " + service_name + " off")
     else:
         log(LOG_NO_ACTION, service_name + " is already off")
+    return change_made
 
 def check_service_status(service_name, should_be_running,
                          needs_restart = False, needs_reload = False):
@@ -763,13 +779,17 @@ def check_service_status(service_name, should_be_running,
         Whether the service should be reloaded if it is already
         running. Is superceded by needs_restart.
 
+    return : boolean
+	Whether any change was made to the service.
+
     e.g. Make sure apache is running only on webservers:
     >>> check_service_status("httpd", server_web)
     """
     if should_be_running:
-        check_service_enabled(service_name, needs_restart, needs_reload)
+        change_made = check_service_enabled(service_name, needs_restart, needs_reload)
     else:
-        check_service_disabled(service_name)
+        change_made = check_service_disabled(service_name)
+    return change_made
 
 def check_rpm_installed(rpm_name):
     """Ensure that the given rpm is installed, using yum for installation.
@@ -777,14 +797,20 @@ def check_rpm_installed(rpm_name):
     rpm_name : string
         Name of rpm to install.
 
+    return : boolean
+	Whether the rpm had to be installed.
+
     e.g. make sure the latest version of matlab is installed:
     >>> check_rpm_installed("matlab")
     """
+    change_made = False
     if shell_command("/bin/rpm -q " + rpm_name + " > /dev/null"):
+        change_made = True
         log(LOG_ACTION, "Installing " + rpm_name)
         shell_command("/usr/bin/yum -e 0 -d 0 -y install " + rpm_name)
     else:
         log(LOG_NO_ACTION, rpm_name + " is already installed")
+    return change_made
 
 def check_selinux_bool(bool_name, bool_value):
     """Ensure that the given SELinux boolean has the given value.

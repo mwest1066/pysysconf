@@ -556,6 +556,9 @@ e.g.&nbsp;Ensure&nbsp;all&nbsp;backup&nbsp;files&nbsp;older&nbsp;than&nbsp;one&n
 rpm_name&nbsp;:&nbsp;string<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Name&nbsp;of&nbsp;rpm&nbsp;to&nbsp;install.<br>
 &nbsp;<br>
+return&nbsp;:&nbsp;boolean<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;the&nbsp;rpm&nbsp;had&nbsp;to&nbsp;be&nbsp;installed.<br>
+&nbsp;<br>
 e.g.&nbsp;make&nbsp;sure&nbsp;the&nbsp;latest&nbsp;version&nbsp;of&nbsp;matlab&nbsp;is&nbsp;installed:<br>
 &gt;&gt;&gt;&nbsp;<a href="#-check_rpm_installed">check_rpm_installed</a>("matlab")</tt></dd></dl>
  <dl><dt><a name="-check_selinux_bool"><strong>check_selinux_bool</strong></a>(bool_name, bool_value)</dt><dd><tt>Ensure&nbsp;that&nbsp;the&nbsp;given&nbsp;SELinux&nbsp;boolean&nbsp;has&nbsp;the&nbsp;given&nbsp;value.<br>
@@ -577,6 +580,9 @@ will&nbsp;not&nbsp;start&nbsp;on&nbsp;boot.<br>
 service_name&nbsp;:&nbsp;string<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Name&nbsp;of&nbsp;service&nbsp;to&nbsp;disable.<br>
 &nbsp;<br>
+return&nbsp;:&nbsp;boolean<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;any&nbsp;change&nbsp;was&nbsp;made&nbsp;to&nbsp;the&nbsp;service.<br>
+&nbsp;<br>
 e.g.&nbsp;Make&nbsp;sure&nbsp;apache&nbsp;is&nbsp;not&nbsp;running:<br>
 &gt;&gt;&gt;&nbsp;<a href="#-check_service_disabled">check_service_disabled</a>("httpd")</tt></dd></dl>
  <dl><dt><a name="-check_service_enabled"><strong>check_service_enabled</strong></a>(service_name, needs_restart<font color="#909090">=False</font>, needs_reload<font color="#909090">=False</font>)</dt><dd><tt>Ensure&nbsp;that&nbsp;the&nbsp;given&nbsp;service&nbsp;is&nbsp;currently&nbsp;running&nbsp;and<br>
@@ -594,6 +600,9 @@ needs_reload&nbsp;:&nbsp;boolean<br>
 &nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;False)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;the&nbsp;service&nbsp;should&nbsp;be&nbsp;reloaded&nbsp;if&nbsp;it&nbsp;is&nbsp;already<br>
 &nbsp;&nbsp;&nbsp;&nbsp;running.&nbsp;Is&nbsp;superceded&nbsp;by&nbsp;needs_restart.<br>
+&nbsp;<br>
+return&nbsp;:&nbsp;boolean<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;any&nbsp;change&nbsp;was&nbsp;made&nbsp;to&nbsp;the&nbsp;service.<br>
 &nbsp;<br>
 e.g.&nbsp;Make&nbsp;sure&nbsp;slapd&nbsp;is&nbsp;running:<br>
 &gt;&gt;&gt;&nbsp;<a href="#-check_service_enabled">check_service_enabled</a>("ldap")</tt></dd></dl>
@@ -615,6 +624,9 @@ needs_reload&nbsp;:&nbsp;boolean<br>
 &nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;False)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;the&nbsp;service&nbsp;should&nbsp;be&nbsp;reloaded&nbsp;if&nbsp;it&nbsp;is&nbsp;already<br>
 &nbsp;&nbsp;&nbsp;&nbsp;running.&nbsp;Is&nbsp;superceded&nbsp;by&nbsp;needs_restart.<br>
+&nbsp;<br>
+return&nbsp;:&nbsp;boolean<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;any&nbsp;change&nbsp;was&nbsp;made&nbsp;to&nbsp;the&nbsp;service.<br>
 &nbsp;<br>
 e.g.&nbsp;Make&nbsp;sure&nbsp;apache&nbsp;is&nbsp;running&nbsp;only&nbsp;on&nbsp;webservers:<br>
 &gt;&gt;&gt;&nbsp;<a href="#-check_service_status">check_service_status</a>("httpd",&nbsp;server_web)</tt></dd></dl>
