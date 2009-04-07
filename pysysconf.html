@@ -323,7 +323,7 @@ return&nbsp;:&nbsp;boolean<br>
 &nbsp;<br>
 e.g.&nbsp;Check&nbsp;that&nbsp;the&nbsp;link&nbsp;/var/spool/mail&nbsp;points&nbsp;to&nbsp;/net/maildir:<br>
 &gt;&gt;&gt;&nbsp;<a href="#-check_link">check_link</a>("/net/maildir",&nbsp;"/var/spool/mail")</tt></dd></dl>
- <dl><dt><a name="-check_not_exists"><strong>check_not_exists</strong></a>(dst, test<font color="#909090">=None</font>, follow_links<font color="#909090">=False</font>, backup<font color="#909090">=True</font>)</dt><dd><tt>Delete&nbsp;dst,&nbsp;or&nbsp;files&nbsp;in&nbsp;dst&nbsp;that&nbsp;satisfy&nbsp;test.<br>
+ <dl><dt><a name="-check_not_exists"><strong>check_not_exists</strong></a>(dst, test<font color="#909090">=None</font>, follow_links<font color="#909090">=False</font>, backup<font color="#909090">=False</font>)</dt><dd><tt>Delete&nbsp;dst,&nbsp;or&nbsp;files&nbsp;in&nbsp;dst&nbsp;that&nbsp;satisfy&nbsp;test.<br>
 &nbsp;<br>
 dst&nbsp;:&nbsp;string<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Directory&nbsp;name&nbsp;to&nbsp;remove&nbsp;files&nbsp;in.<br>
@@ -339,7 +339,7 @@ follow_links&nbsp;:&nbsp;boolean<br>
 &nbsp;&nbsp;&nbsp;&nbsp;being&nbsp;processed.<br>
 &nbsp;<br>
 backup&nbsp;:&nbsp;boolean<br>
-&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;True)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(optional:&nbsp;default&nbsp;=&nbsp;False)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Whether&nbsp;to&nbsp;rename&nbsp;objects&nbsp;to&nbsp;&lt;filename&gt;.&lt;isodate&gt;&nbsp;rather&nbsp;than<br>
 &nbsp;&nbsp;&nbsp;&nbsp;deleting&nbsp;them.<br>
 &nbsp;<br>

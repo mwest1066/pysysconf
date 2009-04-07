@@ -436,7 +436,7 @@ def check_dir_exists(dst, uid = None, gid = None, perm = None,
         log(LOG_ERROR, "Error: " + str(e))
     return change_made
 
-def check_not_exists(dst, test = None, follow_links = False, backup = True):
+def check_not_exists(dst, test = None, follow_links = False, backup = False):
     """Delete dst, or files in dst that satisfy test.
 
     dst : string
@@ -453,7 +453,7 @@ def check_not_exists(dst, test = None, follow_links = False, backup = True):
 	being processed.
 
     backup : boolean
-	(optional: default = True)
+	(optional: default = False)
 	Whether to rename objects to <filename>.<isodate> rather than
 	deleting them.
 
