@@ -1179,3 +1179,17 @@ class test_age(remove_test):
 	    return True
 	else:
 	    return False
+
+class test_regexp(remove_test):
+    """Tests whether a filename matches a given regexp.
+    """
+    regexp = None
+
+    def __init__(self, regexp):
+	self.regexp = regexp
+
+    def test(self, file_name, file_stat):
+        if self.regexp.search(file_name):
+	    return True
+	else:
+	    return False
