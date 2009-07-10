@@ -41,7 +41,7 @@ exceptions fall through.
 
 ##############################################################################
 # imports
-import sys, socket, os, md5, datetime, stat, errno, pwd, grp, types, syslog
+import sys, socket, os, filecmp, datetime, stat, errno, pwd, grp, types, syslog
 
 _HAVE_SELINUX_MODULE = False
 try:
@@ -107,24 +107,40 @@ def acquire_lock(lock_name):
     >>> acquire_lock("/var/lock/pysysconf/copylock")
     """
     try:
+        # create a new file with exclusive access (fails if file
+        # already exists)
         fd = os.open(lock_name, os.O_CREAT | os.O_EXCL | os.O_RDWR, 0644)
     except:
+        # Lockfile already exists, read out the PID from it. If the
+        # process that created the lockfile is still running, then we
+        # don't aquire the lock. If the process is not running, then
+        # we steal the lockfile.
         try:
             fd = open(lock_name)
             pid = fd.read()
             fd.close()
             is_running = False
             try:
-                if os.system("ps p %d" % int(pid)):
-                    is_running = True
+                # To check if the process with the given PID is still
+                # running, we try to get its session ID, which raises
+                # an exception if the process doesn't exist.
+                os.getsid(int(pid))
+                is_running = True
             except:
                 pass
+            if is_running:
+                log(LOG_ERROR, "Error: unable to acquire lock "
+                    + lock_name)
+                return False
+            # The old process is not running, so steal its lockfile.
             os.unlink(lock_name)
             fd = os.open(lock_name, os.O_CREAT | os.O_EXCL | os.O_RDWR, 0644)
         except:
             log(LOG_ERROR, "Error: unable to acquire lock "
                 + lock_name)
             return False
+    # we've successfully created the lockfile, now write our PID into
+    # it
     os.write(fd, str(os.getpid()))
     try:
         os.close(fd)
@@ -889,9 +905,8 @@ def _copy_file(src, dst, backup, log_no_action = True):
             if not stat.S_ISREG(src_mode):
                 raise PyError("src " + src + " changed as we were " \
                               "watching (expected a regular file)")
-            if dst_stat.st_size == src_stat.st_size:
-                if _md5sum(dst) == _md5sum(src):
-                    need_copy = False
+            if filecmp.cmp(src, dst, shallow = False):
+                need_copy = False
     if need_copy:
         if dst_exists:
             _remove(dst, backup)
@@ -1195,25 +1210,6 @@ def _copy_file_data(src, dst):
             fdst.close()
         if fsrc:
             fsrc.close()
-
-def _md5sum(filename):
-    """Compute the MD5 sum of the given file.
-
-    filename : string
-        Name of file to compute md5 sum of.
-
-    return : string
-        Returns the MD5 sum.
-    """
-    f = file(filename, "rb")
-    m = md5.new()
-    while True:
-        d = f.read(8192)
-        if not d:
-            break
-        m.update(d)
-    f.close()
-    return m.digest()
 
 def _chkstat(dst, uid, gid, perm, se_context,
              se_user, se_role, se_type, se_level):

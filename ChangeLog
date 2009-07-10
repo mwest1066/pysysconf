@@ -1,4 +1,15 @@
 
+0.3.2 2009-07-10
+
+	- Use filecmp module to compare files rather than computing md5
+	  sums. This removes the deprecation warning for the md5 module
+	  with python 2.6.
+
+	- Fix acquire_lock() to actually work in the case that the
+	  lockfile already exists and the process using it is still
+	  running, and also to work without calling "ps" by using the
+	  builtin function os.getsid().
+
 0.3.1 2009-06-11
 
 	- Update to python 2.6
