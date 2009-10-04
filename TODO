@@ -7,3 +7,7 @@ else:
 	check_not_exists("/etc/cron/YYY")
 To fix this, add an only_if optional argument to check_copy, which if
 true will act as a copy, and if false will act as a check_not_exists.
+
+When deleting things in directories older than a certain date, add a
+keep_at_least argument to keep at least that many things in the
+directory, and do deletes oldest-first.
