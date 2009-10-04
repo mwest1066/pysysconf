@@ -1465,13 +1465,13 @@ def _remove_by_test(dst, test, follow_links = False, backup = True):
     return : boolean
 	Whether any change was made to dst.
     """
+    change_made = False
     dst_stat = os.lstat(dst)
     dst_mode = dst_stat.st_mode
     if not stat.S_ISDIR(dst_mode):
-	raise PysysconfException("A test was specified for deleting in " \
-				 + dst + ", but it is not a directory")
+	log(LOG_ERROR, "A test was specified for deleting in "
+            + dst + ", but it is not a directory")
     dst_list = os.listdir(dst)
-    change_made = False
     for f in dst_list:
         f_name = os.path.join(dst, f)
 	if follow_links:
