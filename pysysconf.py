@@ -843,6 +843,10 @@ def check_selinux_bool(bool_name, bool_value):
     e.g. make sure the webserver can access user home directories:
     >>> check_sebool("httpd_enable_homedirs", True)
     """
+    if not selinux.is_selinux_enabled():
+        log(LOG_NO_ACTION, "Not testing SELinux boolean %s as SELinux is not enabled"
+            % bool_name)
+        return False
     change_made = False
     if bool_value == True:
         if shell_command("/usr/sbin/getsebool %s | grep -q \"%s --> on\""

@@ -3,6 +3,9 @@
 	- Changed PysysconfException to LOG_ERROR for test-based deletion
 	on non-directories.
 
+	- Check whether SELinux is enabled before trying to get or set
+	SELinux booleans.
+
 0.3.2 2009-07-10
 
 	- Use filecmp module to compare files rather than computing md5
