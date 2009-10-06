@@ -1,6 +1,6 @@
 info:
 	@echo "make dist:     Build .tar.gz. and .rpm distribution archives (remember to"
-	@echo "               bump the version number in setup.py first)"
+	@echo "               bump the version number in setup.py and ChangeLog first)"
 	@echo "make install:  Install on current machine"
 
 dist: sdist bdist
