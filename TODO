@@ -11,3 +11,9 @@ true will act as a copy, and if false will act as a check_not_exists.
 When deleting things in directories older than a certain date, add a
 keep_at_least argument to keep at least that many things in the
 directory, and do deletes oldest-first.
+
+Add PID to syslog logging, so lines start with pysysconf[PID]:
+
+Add check_rpm_not_installed (for core_programs).
+
+Add service_exists/double_check_service_disabled (run_pysysconf).
