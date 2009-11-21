@@ -697,10 +697,10 @@ def shell_command(command):
 
 def service_exists(service_name):
     """Test if the service is installed.
-    
+
     service_name : string
         Name of service to check for.
-    
+
     e.g. Check whether a service is installed:
     >>> if not service_exists("httpd"):
     >>>     print "httpd is installed"
