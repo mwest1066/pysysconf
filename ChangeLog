@@ -1,4 +1,11 @@
 
+0.3.4 2009-11-20
+
+	- Added service_exists() function and modified
+	check_service_enabled(), check_service_disabled(), and
+	check_service_status() to use it, so they will run without error
+	even when the service is not present.
+
 0.3.3 2009-10-06
 
 	- Changed PysysconfException to LOG_ERROR for test-based deletion
