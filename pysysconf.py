@@ -695,6 +695,18 @@ def shell_command(command):
     log(LOG_ACTION, "Running \"" + command + "\"")
     return os.system(command)
 
+def service_exists(service_name):
+    """Test if the service is installed.
+    
+    service_name : string
+        Name of service to check for.
+    
+    e.g. Check whether a service is installed:
+    >>> if not service_exists("httpd"):
+    >>>     print "httpd is installed"
+    """
+    return os.path.exists("/etc/init.d/" + service_name)
+
 def check_service_enabled(service_name, needs_restart = False,
                           needs_reload = False):
     """Ensure that the given service is currently running and
@@ -716,10 +728,13 @@ def check_service_enabled(service_name, needs_restart = False,
     return : boolean
 	Whether any change was made to the service.
 
-    e.g. Make sure slapd is running:
-    >>> check_service_enabled("ldap")
+    e.g. Make sure apache is running:
+    >>> check_service_enabled("httpd")
     """
     change_made = False
+    if not service_exists(service_name):
+        log(LOG_ERROR, "service %s is not installed" % service_name)
+        return change_made
     if shell_command("/sbin/service " + service_name + " status > /dev/null"):
         change_made = True
         log(LOG_ACTION, "Starting " + service_name)
@@ -758,6 +773,11 @@ def check_service_disabled(service_name):
     >>> check_service_disabled("httpd")
     """
     change_made = False
+    if not service_exists(service_name):
+        log(LOG_NO_ACTION,
+            "service %s is not installed, so is already disabled"
+            % service_name)
+        return change_made
     if not shell_command("/sbin/service " + service_name + " status"
                          + " > /dev/null"):
         change_made = True
