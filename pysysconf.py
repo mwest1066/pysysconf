@@ -843,7 +843,10 @@ def check_rpm_installed(rpm_name):
     if shell_command("/bin/rpm -q " + rpm_name + " > /dev/null"):
         change_made = True
         log(LOG_ACTION, "Installing " + rpm_name)
-        shell_command("/usr/bin/yum -e 0 -d 0 -y install " + rpm_name)
+        if shell_command("/usr/bin/yum -e 0 -d 0 -y install " + rpm_name):
+            log(LOG_ERROR, "Error installing " + rpm_name)
+        else:
+            log(LOG_ACTION, "Successfully installed " + rpm_name)
     else:
         log(LOG_NO_ACTION, rpm_name + " is already installed")
     return change_made
