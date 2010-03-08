@@ -1,4 +1,9 @@
 
+0.3.5 2010-03-07
+
+	- Added check_rpm_not_installed() function and added more logging
+	to check_rpm_installed().
+
 0.3.4 2009-11-20
 
 	- Added service_exists() function and modified
