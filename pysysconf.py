@@ -1,5 +1,5 @@
 # PySysConf - library to aid in system configuration.
-# Copyright (C) 2004-2009 Matthew West
+# Copyright (C) 2004-2010 Matthew West
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -846,6 +846,30 @@ def check_rpm_installed(rpm_name):
         shell_command("/usr/bin/yum -e 0 -d 0 -y install " + rpm_name)
     else:
         log(LOG_NO_ACTION, rpm_name + " is already installed")
+    return change_made
+
+def check_rpm_not_installed(rpm_name):
+    """Ensure that the given rpm is not installed, using yum for removal.
+
+    rpm_name : string
+        Name of rpm to remove.
+
+    return : boolean
+	Whether the rpm had to be removed.
+
+    e.g. make sure matlab is not installed:
+    >>> check_rpm_not_installed("matlab")
+    """
+    change_made = False
+    if not shell_command("/bin/rpm -q " + rpm_name + " > /dev/null"):
+        change_made = True
+        log(LOG_ACTION, "Removing " + rpm_name)
+        if shell_command("/usr/bin/yum -e 0 -d 0 -y remove " + rpm_name):
+            log(LOG_ERROR, "Error removing " + rpm_name)
+        else:
+            log(LOG_ACTION, "Successfully removed " + rpm_name)
+    else:
+        log(LOG_NO_ACTION, rpm_name + " is already not installed")
     return change_made
 
 def check_selinux_bool(bool_name, bool_value):
