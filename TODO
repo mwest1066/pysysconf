@@ -15,3 +15,14 @@ directory, and do deletes oldest-first.
 Add PID to syslog logging, so lines start with pysysconf[PID]:
 
 Add check_rpm_not_installed (for core_programs).
+
+Change remove_test to RemoveTest and similary for children.
+
+Make remove_test a child of Object.
+
+Remove spaces around = in optional arguments.
+
+Make test_age take a "direction" argument that defaults to "older" but
+can be "newer".
+
+Add test_and and test_or object that take lists of sub-tests.
