@@ -1532,6 +1532,7 @@ def _remove_by_test(dst, test, follow_links = False, backup = True):
 	f_mode = f_stat.st_mode
 	if test.test(f_name, f_stat):
 	    _remove(f_name, backup)
+            change_made = True
             log(LOG_ACTION, f_name + " removed")
 	else:
 	    if stat.S_ISDIR(f_mode):

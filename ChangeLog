@@ -1,4 +1,10 @@
 
+0.3.6 XXXX-XX-XX
+
+	- Fixed bogus reporting of "did not have any removals" when
+	check_not_exists() is called with a test parameter and files were
+	in fact removed.
+	
 0.3.5 2010-03-07
 
 	- Added check_rpm_not_installed() function and added more logging
