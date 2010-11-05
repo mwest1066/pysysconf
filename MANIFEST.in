@@ -1,0 +1,5 @@
+include test_pysysconf.py
+include pysysconf.html
+include ChangeLog
+include LICENSE
+include TODO
