@@ -1,4 +1,9 @@
 
+0.4.0 2012-08-31
+
+	- Use systemctl rather than service/chkconfig if Fedora version is at
+	least 17.
+
 0.3.6 2010-11-05
 
 	- Fixed bogus reporting of "did not have any removals" when
