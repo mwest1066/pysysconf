@@ -1,5 +1,5 @@
 # PySysConf - library to aid in system configuration.
-# Copyright (C) 2004-2010 Matthew West
+# Copyright (C) 2004-2012 Matthew West
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -57,13 +57,6 @@ except ImportError:
 #    LOG_ACTION     we did something (copied a file, changed a link, etc)
 #    LOG_NO_ACTION  we didn't do a particular thing
 LOG_NONE, LOG_ERROR, LOG_ACTION, LOG_NO_ACTION, = range(4)
-
-verbosity = LOG_ERROR
-syslog_verbosity = LOG_ACTION
-syslog_priority = syslog.LOG_INFO
-syslog_facility = syslog.LOG_USER
-
-syslog.openlog("pysysconf")
 
 ##############################################################################
 # internal errors
@@ -705,7 +698,13 @@ def service_exists(service_name):
     >>> if not service_exists("httpd"):
     >>>     print "httpd is installed"
     """
-    return os.path.exists("/etc/init.d/" + service_name)
+    if dist_version < 17:
+        return os.path.exists("/etc/init.d/" + service_name)
+    else:
+        if shell_command(r"/bin/systemctl list-unit-files | grep -q '%s\.service'" % service_name):
+            return False
+        else:
+            return True
 
 def check_service_enabled(service_name, needs_restart = False,
                           needs_reload = False):
@@ -735,28 +734,50 @@ def check_service_enabled(service_name, needs_restart = False,
     if not service_exists(service_name):
         log(LOG_ERROR, "service %s is not installed" % service_name)
         return change_made
-    if shell_command("/sbin/service " + service_name + " status > /dev/null"):
-        change_made = True
-        log(LOG_ACTION, "Starting " + service_name)
-        shell_command("/sbin/service " + service_name + " start")
-    else:
-        log(LOG_NO_ACTION, service_name + " is already running")
-        if needs_restart:
+    if dist_version < 17:
+        if shell_command("/sbin/service " + service_name + " status > /dev/null"):
             change_made = True
-            log(LOG_ACTION, "Restarting " + service_name)
-            shell_command("/sbin/service " + service_name + " restart")
+            log(LOG_ACTION, "Starting " + service_name)
+            shell_command("/sbin/service " + service_name + " start")
         else:
-            if needs_reload:
+            log(LOG_NO_ACTION, service_name + " is already running")
+            if needs_restart:
+                change_made = True
+                log(LOG_ACTION, "Restarting " + service_name)
+                shell_command("/sbin/service " + service_name + " restart")
+            else:
+                if needs_reload:
+                    change_made = True
+                    log(LOG_ACTION, "Reloading " + service_name)
+                    shell_command("/sbin/service " + service_name + " reload")
+        if shell_command("/sbin/chkconfig --list " + service_name \
+                             + " | grep -q \":on\""):
+            change_made = True
+            log(LOG_ACTION, "Turning on " + service_name)
+            shell_command("/sbin/chkconfig " + service_name + " on")
+        else:
+            log(LOG_NO_ACTION, service_name + " is already on")
+    else:
+        if shell_command("/bin/systemctl --quiet is-active " + service_name + ".service"):
+            change_made = True
+            log(LOG_ACTION, "Starting " + service_name)
+            shell_command("/bin/systemctl start " + service_name + ".service")
+        else:
+            log(LOG_NO_ACTION, service_name + " is already running")
+            if needs_restart:
+                change_made = True
+                log(LOG_ACTION, "Restarting " + service_name)
+                shell_command("/bin/systemctl restart " + service_name + ".service")
+            elif needs_reload:
                 change_made = True
                 log(LOG_ACTION, "Reloading " + service_name)
-                shell_command("/sbin/service " + service_name + " reload")
-    if shell_command("/sbin/chkconfig --list " + service_name \
-                         + " | grep -q \":on\""):
-        change_made = True
-        log(LOG_ACTION, "Turning on " + service_name);
-        shell_command("/sbin/chkconfig " + service_name + " on")
-    else:
-        log(LOG_NO_ACTION, service_name + " is already on")
+                shell_command("/bin/systemctl reload-or-restart " + service_name + ".service")
+        if shell_command("/bin/systemctl --quiet is-enabled " + service_name + ".service"):
+            change_made = True
+            log(LOG_ACTION, "Enabling " + service_name)
+            shell_command("/bin/systemctl enable " + service_name + ".service")
+        else:
+            log(LOG_NO_ACTION, service_name + " is already enabled")
     return change_made
 
 def check_service_disabled(service_name):
@@ -778,20 +799,34 @@ def check_service_disabled(service_name):
             "service %s is not installed, so is already disabled"
             % service_name)
         return change_made
-    if not shell_command("/sbin/service " + service_name + " status"
-                         + " > /dev/null"):
-        change_made = True
-        log(LOG_ACTION, "Stopping " + service_name);
-        shell_command("/sbin/service " + service_name + " stop")
+    if dist_version < 17:
+        if not shell_command("/sbin/service " + service_name + " status"
+                             + " > /dev/null"):
+            change_made = True
+            log(LOG_ACTION, "Stopping " + service_name);
+            shell_command("/sbin/service " + service_name + " stop")
+        else:
+            log(LOG_NO_ACTION, service_name + " is already stopped")
+        if not shell_command("/sbin/chkconfig --list " + service_name \
+                             + " | grep -q \":on\""):
+            change_made = True
+            log(LOG_ACTION, "Turning off " + service_name);
+            shell_command("/sbin/chkconfig " + service_name + " off")
+        else:
+            log(LOG_NO_ACTION, service_name + " is already off")
     else:
-        log(LOG_NO_ACTION, service_name + " is already stopped")
-    if not shell_command("/sbin/chkconfig --list " + service_name \
-                         + " | grep -q \":on\""):
-        change_made = True
-        log(LOG_ACTION, "Turning off " + service_name);
-        shell_command("/sbin/chkconfig " + service_name + " off")
-    else:
-        log(LOG_NO_ACTION, service_name + " is already off")
+        if not shell_command("/bin/systemctl --quiet is-active " + service_name + ".service"):
+            change_made = True
+            log(LOG_ACTION, "Stopping " + service_name);
+            shell_command("/bin/systemctl stop " + service_name + ".service")
+        else:
+            log(LOG_NO_ACTION, service_name + " is already stopped")
+        if not shell_command("/bin/systemctl --quiet is-enabled " + service_name + ".service"):
+            change_made = True
+            log(LOG_ACTION, "Enabling " + service_name);
+            shell_command("/bin/systemctl disable " + service_name + ".service")
+        else:
+            log(LOG_NO_ACTION, service_name + " is already disabled")
     return change_made
 
 def check_service_status(service_name, should_be_running,
@@ -1601,3 +1636,57 @@ class test_regexp(remove_test):
 	    return True
 	else:
 	    return False
+
+##############################################################################
+# initialize logging
+
+verbosity = LOG_ERROR
+syslog_verbosity = LOG_ACTION
+syslog_priority = syslog.LOG_INFO
+syslog_facility = syslog.LOG_USER
+
+syslog.openlog("pysysconf")
+
+##############################################################################
+# find distro version
+
+dist_version = None
+dist_name = ""
+if not shell_command("/bin/grep -q 'Fedora release 11 (Leonidas)' " +
+                           "/etc/system-release"):
+	dist_version = 11
+	dist_name = "f11"
+if not shell_command("/bin/grep -q 'Fedora release 12 (Constantine)' " +
+                           "/etc/system-release"):
+	dist_version = 12
+	dist_name = "f12"
+if not shell_command("/bin/grep -q 'Fedora release 13 (Goddard)' " +
+                           "/etc/system-release"):
+	dist_version = 13
+	dist_name = "f13"
+if not shell_command("/bin/grep -q 'Fedora release 14 (Laughlin)' " +
+                           "/etc/system-release"):
+	dist_version = 14
+	dist_name = "f14"
+
+if not shell_command("/bin/grep -q 'Fedora release 15 (Lovelock)' " +
+                           "/etc/system-release"):
+        dist_version = 15
+        dist_name = "f15"
+
+if not shell_command("/bin/grep -q 'Fedora release 16 (Verne)' " +
+                           "/etc/system-release"):
+        dist_version = 16
+        dist_name = "f16"
+
+if not shell_command("/bin/grep -q 'Fedora release 17 (Beefy Miracle)' " +
+                           "/etc/system-release"):
+        dist_version = 17
+        dist_name = "f17"
+
+if dist_version is None:
+	log(LOG_ERROR, "Unable to determine distribution version")
+	sys.exit(1)
+
+log(LOG_NO_ACTION, "Found distribution: version = %d, name = %s"
+	           % (dist_version, dist_name))
