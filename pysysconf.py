@@ -1684,6 +1684,11 @@ if not shell_command("/bin/grep -q 'Fedora release 17 (Beefy Miracle)' " +
         dist_version = 17
         dist_name = "f17"
 
+if not shell_command("/bin/grep -q 'Fedora release 18 (Spherical Cow)' " +
+                           "/etc/system-release"):
+        dist_version = 18
+        dist_name = "f18"
+
 if dist_version is None:
 	log(LOG_ERROR, "Unable to determine distribution version")
 	sys.exit(1)
